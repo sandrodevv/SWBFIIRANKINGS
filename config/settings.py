@@ -17,10 +17,22 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+def _normalize_csrf_origin(origin: str) -> str:
+    origin = origin.strip().rstrip("/")
+    if not origin:
+        return ""
+    if origin.startswith(("http://", "https://")):
+        return origin
+    return f"https://{origin}"
+
+
 CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if origin.strip()
+    origin
+    for origin in (
+        _normalize_csrf_origin(value)
+        for value in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+    )
+    if origin
 ]
 
 INSTALLED_APPS = [

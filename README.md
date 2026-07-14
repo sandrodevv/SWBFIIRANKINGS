@@ -178,7 +178,13 @@ frontend/static/     SCSS, JavaScript, images
 
 ## SCSS
 
-Styles are written in SCSS under `frontend/static/scss/` and compiled automatically by `django-sass-processor` when templates load `{% sass_src 'scss/main.scss' %}`.
+Styles are written in SCSS under `frontend/static/scss/`. Compile to CSS before deploying:
+
+```bash
+python scripts/compile_scss.py
+```
+
+This writes `frontend/static/css/main.css`, which templates load with `{% static 'css/main.css' %}`. Commit the updated CSS after SCSS changes.
 
 ## Admin
 
