@@ -190,6 +190,48 @@ python manage.py createsuperuser
 
 Admin panel: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
+## Production (Hetzner VPS)
+
+Production dependencies are already in `requirements.txt`:
+
+- `psycopg[binary]` — PostgreSQL
+- `gunicorn` — app server
+- `whitenoise` — static files
+
+Example files:
+
+- `Procfile` — gunicorn start command
+- `deploy/swbfii.service` — systemd unit
+- `deploy/nginx.swbfii.conf` — Nginx reverse proxy + `/static/` + `/media/`
+
+### On the server (summary)
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Create .env with at least:
+# DEBUG=False
+# SECRET_KEY=...
+# ALLOWED_HOSTS=your.domain
+# CSRF_TRUSTED_ORIGINS=https://your.domain
+# DATABASE_URL=postgresql://user:password@host:5432/dbname
+
+python manage.py migrate
+python manage.py seed_rankings --characters-only
+python manage.py createsuperuser
+python manage.py collectstatic --noinput
+```
+
+Start with gunicorn (or enable the systemd unit):
+
+```bash
+gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
+```
+
+Put Nginx in front (see `deploy/nginx.swbfii.conf`), then add HTTPS with certbot.
+
 ## Future Expansion
 
 The architecture supports adding authentication, one-vote-per-user, comments, seasons, search, and API versioning without refactoring the core API.
