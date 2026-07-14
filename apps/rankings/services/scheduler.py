@@ -62,6 +62,9 @@ def should_start_background_scheduler() -> bool:
         "createsuperuser",
         "check",
         "send_pfp_ending_webhook",
+        "send_eu_duelist_weekly_webhook",
+        "send_us_duelist_weekly_webhook",
+        "send_au_duelist_weekly_webhook",
     }
     if len(sys.argv) > 1 and sys.argv[1] in skip_commands:
         return False

@@ -242,8 +242,14 @@ class DiscordNotificationLog(models.Model):
     """Idempotency log for automated Discord notifications."""
 
     TYPE_PFP_WEEKLY_ENDING = "pfp_weekly_ending"
+    TYPE_EU_DUELIST_WEEKLY_WINNERS = "eu_duelist_weekly_winners"
+    TYPE_US_DUELIST_WEEKLY_WINNERS = "us_duelist_weekly_winners"
+    TYPE_AU_DUELIST_WEEKLY_WINNERS = "au_duelist_weekly_winners"
     TYPE_CHOICES = [
         (TYPE_PFP_WEEKLY_ENDING, "PFP weekly ending rankings"),
+        (TYPE_EU_DUELIST_WEEKLY_WINNERS, "EU duelist weekly winners"),
+        (TYPE_US_DUELIST_WEEKLY_WINNERS, "US duelist weekly winners"),
+        (TYPE_AU_DUELIST_WEEKLY_WINNERS, "AU duelist weekly winners"),
     ]
 
     STATUS_PENDING = "pending"

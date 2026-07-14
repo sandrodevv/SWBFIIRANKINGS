@@ -6,6 +6,7 @@ not to “7 days from whenever the last reset happened.”
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timedelta, timezone as dt_timezone
 
 from django.conf import settings
@@ -15,6 +16,8 @@ from django.utils import timezone
 
 from apps.rankings.services.pfp import recalculate_all_pfp_scores
 from apps.rankings.models import CharacterRanking, Duelist, WeeklyVotePeriod
+
+logger = logging.getLogger(__name__)
 
 
 def get_period_duration() -> timedelta:
@@ -88,6 +91,27 @@ def snapshot_and_reset_weekly_votes() -> None:
     Duelist.objects.update(last_week_votes=F("votes"), votes=0)
 
 
+def _schedule_duelist_winners_notifications(period_started_at: datetime) -> None:
+    """Send previous-week regional top duelists after the reset transaction commits."""
+
+    def _send() -> None:
+        try:
+            from apps.rankings.services.duelist_discord import (
+                send_all_regional_duelist_weekly_winners,
+            )
+
+            results = send_all_regional_duelist_weekly_winners(
+                period_started_at=period_started_at,
+            )
+            logger.info("Regional duelist weekly winners notification results=%s", results)
+        except Exception:
+            logger.exception(
+                "Failed to queue/send regional duelist weekly winners notifications."
+            )
+
+    transaction.on_commit(_send)
+
+
 def _same_boundary(left: datetime, right: datetime) -> bool:
     return abs((_as_utc(left) - _as_utc(right)).total_seconds()) < 1
 
@@ -126,6 +150,7 @@ def ensure_current_period():
         period.started_at = scheduled_start
         period.save(update_fields=["started_at"])
         recalculate_all_pfp_scores()
+        _schedule_duelist_winners_notifications(scheduled_start)
         return period
 
     # started_at is somehow ahead of the schedule — snap back without reset.
@@ -146,6 +171,7 @@ def reset_weekly_votes():
     period.started_at = scheduled_start
     period.save(update_fields=["started_at"])
     recalculate_all_pfp_scores()
+    _schedule_duelist_winners_notifications(scheduled_start)
     return period
 
 
@@ -164,6 +190,7 @@ def align_period_to_schedule(*, reset_votes: bool = False):
         if reset_votes:
             snapshot_and_reset_weekly_votes()
             recalculate_all_pfp_scores()
+            _schedule_duelist_winners_notifications(scheduled_start)
         if not _same_boundary(period.started_at, scheduled_start):
             period.started_at = scheduled_start
             period.save(update_fields=["started_at"])
