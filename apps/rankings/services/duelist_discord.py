@@ -101,12 +101,22 @@ def build_duelist_winners_embed(
             f"{_rank_label(index)} **{nickname}** — {character} · **{votes}** votes"
         )
 
-    if not lines:
+    if not duelists:
         lines.append(f"_No {label} duelist votes recorded last week._")
 
-    body = "\n".join(lines)
-    if len(body) > 3500:
-        body = "\n".join(lines[:16])
+    max_body_chars = 3500
+    shown_lines = list(lines)
+    body = "\n".join(shown_lines)
+    while len(body) > max_body_chars and len(shown_lines) > 1:
+        shown_lines.pop()
+        body = "\n".join(shown_lines)
+
+    displayed_count = len(shown_lines) if duelists else 0
+    footer_text = (
+        f"Top {displayed_count} · {label} region"
+        if displayed_count
+        else f"{label} region"
+    )
 
     return {
         "title": f"⚔️ {label} Duelist Weekly Winners",
@@ -114,7 +124,7 @@ def build_duelist_winners_embed(
         "color": _embed_color(region),
         "timestamp": timezone.now().isoformat(),
         "footer": {
-            "text": f"Top {_top_n(region)} · {label} region",
+            "text": footer_text,
         },
     }
 
