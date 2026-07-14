@@ -34,6 +34,32 @@ VILLAINS = [
     ("BB-9E", "bb-9e"),
 ]
 
+SABER_SLUGS = {
+    "anakin-skywalker",
+    "luke-skywalker",
+    "obi-wan-kenobi",
+    "rey",
+    "yoda",
+    "count-dooku",
+    "darth-maul",
+    "darth-vader",
+    "kylo-ren",
+    "general-grievous",
+}
+
+BALL_SLUGS = {
+    "bb-8",
+    "bb-9e",
+}
+
+
+def combat_type_for_slug(slug):
+    if slug in SABER_SLUGS:
+        return Character.COMBAT_SABER
+    if slug in BALL_SLUGS:
+        return Character.COMBAT_BALL
+    return Character.COMBAT_BLASTER
+
 NICKNAME_POOL = [
     "GalaxyKing", "SithMaster", "LukeMain", "ForceCrusher", "JediMaster",
     "DarkKnight", "VaderMain", "SkywalkerPro", "BlasterAce", "RebelLeader",
@@ -85,8 +111,64 @@ USERNAME_POOL = [
 ]
 
 DESCRIPTIONS = {
-    "luke-skywalker": "Legendary Jedi who brings hope to the battlefield.",
-    "darth-vader": "The dark lord whose presence dominates every match.",
+    "luke-skywalker": (
+        "The Jedi who became the galaxy's greatest hope, wielding the Force against the darkness."
+    ),
+    "leia-organa": (
+        "A fearless rebel commander whose determination keeps the fight for freedom alive."
+    ),
+    "han-solo": (
+        "A daring smuggler turned hero, relying on instinct, courage, and a lucky shot."
+    ),
+    "chewbacca": (
+        "A mighty Wookiee warrior whose strength and loyalty make him a battlefield monster."
+    ),
+    "yoda": "An ancient Jedi Master whose small stature hides overwhelming power.",
+    "obi-wan-kenobi": (
+        "A legendary Jedi survivor who stands as a symbol of patience and hope."
+    ),
+    "anakin-skywalker": (
+        "The Chosen One, a warrior of unmatched potential before his fall into darkness."
+    ),
+    "rey": (
+        "A desert scavenger who discovered the Force and rose to challenge the First Order."
+    ),
+    "finn": "A former stormtrooper who broke free and fought for a greater cause.",
+    "lando-calrissian": (
+        "A charming gambler and brilliant strategist who became a rebel legend."
+    ),
+    "darth-vader": (
+        "The Empire's unstoppable enforcer, a fallen Jedi consumed by the dark side."
+    ),
+    "emperor-palpatine": (
+        "The Sith mastermind who manipulated the galaxy into submission."
+    ),
+    "darth-maul": (
+        "A warrior forged by hatred, driven by vengeance and endless rage."
+    ),
+    "kylo-ren": (
+        "A conflicted dark warrior desperate to prove himself through power and fear."
+    ),
+    "count-dooku": (
+        "A fallen Jedi whose elegance masks a ruthless Sith ambition."
+    ),
+    "general-grievous": (
+        "A cybernetic killing machine built to hunt Jedi and spread terror."
+    ),
+    "boba-fett": (
+        "The galaxy's most feared bounty hunter, a silent predator who never misses."
+    ),
+    "bossk": "A savage Trandoshan hunter who treats every battle as a hunt.",
+    "iden-versio": (
+        "An elite Imperial commander caught between loyalty and the truth."
+    ),
+    "captain-phasma": (
+        "A ruthless First Order commander whose armor hides cold ambition."
+    ),
+    "bb-8": (
+        "A fearless astromech droid whose courage proves even the smallest heroes can change history."
+    ),
+    "bb-9e": "A First Order security droid built to intimidate and control.",
 }
 
 PLAYERS_PER_CHARACTER = 10
@@ -111,8 +193,76 @@ def assign_players_to_characters(characters, players, players_per_character):
     return assignments
 
 
+def upsert_characters():
+    """Create or update all Heroes/Villains with combat type and descriptions."""
+    created_count = 0
+    for name, slug in HEROES:
+        _, created = Character.objects.update_or_create(
+            slug=slug,
+            defaults={
+                "name": name,
+                "side": Character.SIDE_HERO,
+                "combat_type": combat_type_for_slug(slug),
+                "description": DESCRIPTIONS.get(slug, f"Top players for {name}."),
+            },
+        )
+        created_count += int(created)
+
+    for name, slug in VILLAINS:
+        _, created = Character.objects.update_or_create(
+            slug=slug,
+            defaults={
+                "name": name,
+                "side": Character.SIDE_VILLAIN,
+                "combat_type": combat_type_for_slug(slug),
+                "description": DESCRIPTIONS.get(slug, f"Top players for {name}."),
+            },
+        )
+        created_count += int(created)
+
+    return created_count
+
+
+def find_static_character_image(slug):
+    from django.conf import settings
+
+    directory = settings.BASE_DIR / "frontend" / "static" / "images" / "characters"
+    for extension in Character.STATIC_IMAGE_EXTENSIONS:
+        path = directory / f"{slug}{extension}"
+        if path.is_file():
+            return path
+    return None
+
+
+def attach_static_images(*, replace_existing=False):
+    """
+    Copy matching files from frontend/static/images/characters/ into Character.image.
+
+    Static files remain the deploy-friendly source; this also fills the ImageField
+    so Django admin and media URLs work.
+    """
+    from django.core.files import File
+
+    attached = 0
+    missing = []
+    for character in Character.objects.order_by("slug"):
+        path = find_static_character_image(character.slug)
+        if path is None:
+            missing.append(character.slug)
+            continue
+        if character.image and not replace_existing:
+            continue
+        with path.open("rb") as handle:
+            character.image.save(path.name, File(handle), save=True)
+        attached += 1
+    return attached, missing
+
+
 class Command(BaseCommand):
-    help = "Seed characters, players, and rankings with realistic vote data."
+    help = (
+        "Seed characters, players, and rankings with realistic vote data. "
+        "Use --characters-only for production (characters + images, no fake players)."
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -120,34 +270,48 @@ class Command(BaseCommand):
             action="store_true",
             help="Recreate rankings for all characters (keeps characters and players).",
         )
+        parser.add_argument(
+            "--characters-only",
+            action="store_true",
+            help=(
+                "Only create/update characters (with descriptions and combat types) "
+                "and attach images from frontend/static/images/characters/. "
+                "Does not create players, rankings, or votes."
+            ),
+        )
+        parser.add_argument(
+            "--replace-images",
+            action="store_true",
+            help="When attaching images, overwrite existing Character.image values.",
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
         force = options["force"]
+        characters_only = options["characters_only"]
+        replace_images = options["replace_images"]
         random.seed(42)
 
-        characters_created = 0
-        for name, slug in HEROES:
-            _, created = Character.objects.update_or_create(
-                slug=slug,
-                defaults={
-                    "name": name,
-                    "side": Character.SIDE_HERO,
-                    "description": DESCRIPTIONS.get(slug, f"Top players for {name}."),
-                },
-            )
-            characters_created += int(created)
+        characters_created = upsert_characters()
+        images_attached, missing_images = attach_static_images(
+            replace_existing=replace_images
+        )
 
-        for name, slug in VILLAINS:
-            _, created = Character.objects.update_or_create(
-                slug=slug,
-                defaults={
-                    "name": name,
-                    "side": Character.SIDE_VILLAIN,
-                    "description": DESCRIPTIONS.get(slug, f"Top players for {name}."),
-                },
+        if characters_only:
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Characters-only seed complete: {characters_created} new characters, "
+                    f"{images_attached} images attached, "
+                    f"{Character.objects.count()} characters total."
+                )
             )
-            characters_created += int(created)
+            if missing_images:
+                self.stdout.write(
+                    self.style.WARNING(
+                        "No static image found for: " + ", ".join(missing_images)
+                    )
+                )
+            return
 
         players = []
         for nickname, username in zip(NICKNAME_POOL, USERNAME_POOL):
@@ -199,6 +363,14 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Seed complete: {characters_created} new characters, {rankings_created} rankings created."
+                f"Seed complete: {characters_created} new characters, "
+                f"{images_attached} images attached, "
+                f"{rankings_created} rankings created."
             )
         )
+        if missing_images:
+            self.stdout.write(
+                self.style.WARNING(
+                    "No static image found for: " + ", ".join(missing_images)
+                )
+            )

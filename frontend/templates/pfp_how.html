@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}How PFP Works — SWBFII Rankings{% endblock %}
+{% block body_class %}page-pfp-how{% endblock %}
+
+{% block content %}
+<section class="pfp-how-section section">
+    <div class="container">
+        <div class="section-header">
+            <h1>How Pound-for-Pound (PFP) Rankings Work</h1>
+            <p>A guide to how Pound-for-Pound scoring works</p>
+        </div>
+
+        <div class="pfp-how">
+            <p>
+                Pound-for-Pound compares every Hero and Villain ranking across every character.
+                This means you&apos;re not only competing against players on your own leaderboard, you can
+                also compete with players from every other character. Duelist rankings are not included.
+            </p>
+            <ul class="pfp-how-list">
+                <li>
+                    <strong>Character Ranking</strong>
+                    Your position on your character&apos;s leaderboard is the biggest factor. The higher you
+                    rank compared to other players using the same character, the stronger your PFP score.
+                </li>
+                <li>
+                    <strong>Career Votes</strong>
+                    Your lifetime votes on that character also matter. Players with more total career votes
+                    receive a higher score, especially when compared with the strongest vote totals across
+                    the entire site.
+                </li>
+                <li>
+                    <strong>Character Competition</strong>
+                    Some characters have far more ranked players than others. Performing well on a highly
+                    competitive leaderboard is rewarded more than achieving the same placement on a smaller one.
+                </li>
+                <li>
+                    <strong>Top 8 Bonus</strong>
+                    Finishing in the Top 8 on your character gives an extra boost to your PFP score. The #1
+                    player receives the largest bonus, with slightly smaller bonuses for each position down to #8.
+                </li>
+            </ul>
+            <h2>Final Rankings</h2>
+            <p>
+                All of these factors are combined into a single Pound-for-Pound score. Every Hero and Villain
+                assignment is then ranked together on one global leaderboard.
+            </p>
+            <p>If two players finish with the same score, ties are broken in this order:</p>
+            <ol class="pfp-how-ties">
+                <li>Higher character leaderboard position</li>
+                <li>More career votes</li>
+                <li>Better placement relative to others on that character</li>
+            </ol>
+            <p class="pfp-how-note">
+                PFP rankings update automatically whenever votes or leaderboard positions change.
+            </p>
+            <p class="pfp-how-back">
+                <a href="/pfp/" class="btn btn-primary">Back to PFP rankings</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}

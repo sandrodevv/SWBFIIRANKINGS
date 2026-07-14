@@ -108,12 +108,7 @@ class ChampionListAPIView(APIView):
             if not top:
                 continue
 
-            if character.image:
-                image_url = request.build_absolute_uri(character.image.url)
-            else:
-                image_url = request.build_absolute_uri(
-                    f"/static/images/characters/{character.slug}.jpg"
-                )
+            image_url = character.get_image_url(request)
 
             champions.append(
                 {

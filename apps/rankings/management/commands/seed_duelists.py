@@ -110,12 +110,16 @@ class Command(BaseCommand):
         character = random.choice(sabers)
         region = random.choice(REGIONS)
         weekly = random.randint(0, 120)
-        all_time = weekly + random.randint(20, 400)
+        # Populate last_week_votes so Discord weekly-winner webhooks have data
+        # before a real weekly reset has run.
+        last_week = random.randint(max(weekly, 1), max(weekly, 1) + 80)
+        all_time = last_week + weekly + random.randint(20, 300)
         duelist = Duelist(
             player=player,
             region=region,
             character=character,
             votes=weekly,
+            last_week_votes=last_week,
             all_time_votes=all_time,
         )
         duelist.full_clean()

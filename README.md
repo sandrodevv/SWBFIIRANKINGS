@@ -35,6 +35,19 @@ DATABASE_URL=postgresql://user:password@localhost:5432/battlefront_rankings
 
 ```bash
 python manage.py migrate
+```
+
+**Production (recommended):** characters + images only — no fake players/votes:
+
+```bash
+python manage.py seed_rankings --characters-only
+```
+
+Put images in `frontend/static/images/characters/{slug}.webp|.png|.jpg` first; the command attaches any matches it finds.
+
+**Local demo data** (fake players + votes):
+
+```bash
 python manage.py seed_rankings
 ```
 
@@ -80,13 +93,13 @@ frontend/static/images/characters/
 Use the character slug as the filename:
 
 ```
-frontend/static/images/characters/luke-skywalker.jpg
-frontend/static/images/characters/darth-vader.jpg
+frontend/static/images/characters/luke-skywalker.webp
+frontend/static/images/characters/darth-vader.png
 frontend/static/images/characters/leia-organa.jpg
 ... (one file per character slug)
 ```
 
-Supported formats: `.jpg`, `.png`, `.webp`
+Supported formats: `.webp`, `.png`, `.jpg`, `.jpeg` (first match wins, in that order).
 
 Until images are added, the UI shows a styled fallback with character initials and side-colored gradients.
 

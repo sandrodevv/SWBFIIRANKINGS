@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Character(models.Model):
@@ -17,6 +18,8 @@ class Character(models.Model):
         (COMBAT_BLASTER, "Blaster"),
         (COMBAT_BALL, "Ball"),
     ]
+
+    STATIC_IMAGE_EXTENSIONS = (".webp", ".png", ".jpg", ".jpeg")
 
     name = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(max_length=120, unique=True)
@@ -39,3 +42,26 @@ class Character(models.Model):
     @classmethod
     def saber_queryset(cls):
         return cls.objects.filter(combat_type=cls.COMBAT_SABER).order_by("side", "name")
+
+    def resolve_static_image_path(self) -> str:
+        """
+        Return the first matching static character image path.
+
+        Prefers webp, then png, then jpg/jpeg under
+        frontend/static/images/characters/{slug}.*
+        """
+        relative_dir = settings.BASE_DIR / "frontend" / "static" / "images" / "characters"
+        for extension in self.STATIC_IMAGE_EXTENSIONS:
+            candidate = relative_dir / f"{self.slug}{extension}"
+            if candidate.is_file():
+                return f"/static/images/characters/{self.slug}{extension}"
+        return f"/static/images/characters/{self.slug}.jpg"
+
+    def get_image_url(self, request=None) -> str:
+        if self.image:
+            url = self.image.url
+        else:
+            url = self.resolve_static_image_path()
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url

@@ -83,7 +83,31 @@
 .character-card,
 .champion-card {
   @extend .card;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .card-actions {
+    margin-top: auto;
+    padding-top: $spacing-md;
+  }
 }
+
+.character-card .card-stat {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  min-height: 2.5em;
+}
+
 
 .character-card--hero,
 .champion-card--hero {
@@ -129,3 +153,4 @@
 .card-actions {
   margin-top: $spacing-md;
 }
+

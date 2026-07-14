@@ -78,12 +78,7 @@ class CharacterSerializer(serializers.ModelSerializer):
         ]
 
     def get_image_url(self, obj):
-        request = self.context.get("request")
-        if obj.image:
-            url = obj.image.url
-            return request.build_absolute_uri(url) if request else url
-        static_path = f"/static/images/characters/{obj.slug}.jpg"
-        return request.build_absolute_uri(static_path) if request else static_path
+        return obj.get_image_url(self.context.get("request"))
 
     def get_top_player(self, obj):
         rankings = list(obj.rankings.all())

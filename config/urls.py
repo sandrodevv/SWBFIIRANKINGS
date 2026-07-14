@@ -11,6 +11,11 @@ urlpatterns = [
     path("", TemplateView.as_view(template_name="index.html"), name="home"),
     path("pfp/", TemplateView.as_view(template_name="pfp.html"), name="pfp"),
     path(
+        "pfp/how-it-works/",
+        TemplateView.as_view(template_name="pfp_how.html"),
+        name="pfp-how",
+    ),
+    path(
         "duelists/",
         TemplateView.as_view(template_name="duelists.html"),
         name="duelists",

@@ -344,3 +344,92 @@ def send_au_duelist_weekly_winners_notification(
         period_started_at=period_started_at,
         force=force,
     )
+
+
+def _overall_alltime_top_n() -> int:
+    return max(1, int(getattr(settings, "OVERALL_ALLTIME_DUELIST_WEBHOOK_TOP_N", 16)))
+
+
+def _overall_alltime_embed_color() -> int:
+    return int(
+        getattr(settings, "OVERALL_ALLTIME_DUELIST_WEBHOOK_EMBED_COLOR", 0xA855F7)
+    )
+
+
+def get_overall_alltime_duelist_top(limit: int | None = None) -> list[Duelist]:
+    """Return top duelists overall ranked by all-time votes."""
+    limit = limit if limit is not None else _overall_alltime_top_n()
+    return list(
+        Duelist.objects.select_related("player", "character")
+        .order_by("-all_time_votes", "created_at")[:limit]
+    )
+
+
+def build_overall_alltime_duelist_embed(
+    duelists: list[Duelist],
+) -> dict[str, Any]:
+    """Build a Discord embed for the overall all-time duelist leaderboard."""
+    description = "Overall all-time duelist leaderboard across every region."
+
+    lines: list[str] = []
+    for index, duelist in enumerate(duelists, start=1):
+        nickname = duelist.player.nickname
+        character = duelist.character.name
+        region = duelist.region.upper()
+        votes = duelist.all_time_votes
+        lines.append(
+            f"{_rank_label(index)} **{nickname}** — {character} · {region} · **{votes}** votes"
+        )
+
+    if not duelists:
+        lines.append("_No all-time duelist votes recorded yet._")
+
+    max_body_chars = 3500
+    shown_lines = list(lines)
+    body = "\n".join(shown_lines)
+    while len(body) > max_body_chars and len(shown_lines) > 1:
+        shown_lines.pop()
+        body = "\n".join(shown_lines)
+
+    displayed_count = len(shown_lines) if duelists else 0
+    footer_text = (
+        f"Top {displayed_count} · Overall · All-time"
+        if displayed_count
+        else "Overall · All-time"
+    )
+
+    return {
+        "title": "⚔️ Overall All-Time Duelist Leaderboard",
+        "description": f"{description}\n\n{body}",
+        "color": _overall_alltime_embed_color(),
+        "timestamp": timezone.now().isoformat(),
+        "footer": {"text": footer_text},
+    }
+
+
+def send_overall_alltime_duelist_notification() -> str:
+    """
+    Send the overall all-time duelist leaderboard to Discord.
+
+    Manual snapshot (not period-gated). Never raises.
+    """
+    try:
+        duelists = get_overall_alltime_duelist_top()
+        embed = build_overall_alltime_duelist_embed(duelists)
+        ok = send_discord_embeds(
+            [embed],
+            setting_name="DISCORD_OVERALL_ALLTIME_DUELIST_WEBHOOK_URL",
+        )
+        if ok:
+            logger.info(
+                "Overall all-time duelist Discord notification sent (%s entries).",
+                len(duelists),
+            )
+            return "sent"
+        logger.error("Overall all-time duelist Discord notification failed.")
+        return "failed"
+    except Exception:
+        logger.exception(
+            "Unexpected error while sending overall all-time duelist Discord notification."
+        )
+        return "error"

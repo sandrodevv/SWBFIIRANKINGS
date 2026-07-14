@@ -6,4 +6,99 @@
     color: $color-white;
     margin-bottom: $spacing-sm;
   }
+
+  .section-header a {
+    color: $color-gold-light;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.page-pfp-how {
+  .section-header h1 {
+    font-family: $font-display;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: $color-white;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.pfp-how-section {
+  .container {
+    align-items: stretch;
+  }
+}
+
+.pfp-how {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: $spacing-lg $spacing-xl;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background: rgba(17, 24, 39, 0.55);
+
+  h2 {
+    font-family: $font-display;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: $color-white;
+    margin: $spacing-lg 0 $spacing-md;
+  }
+
+  > p {
+    color: $color-muted;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.pfp-how-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  li {
+    color: $color-muted;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    padding-left: $spacing-md;
+    border-left: 2px solid rgba(212, 168, 67, 0.45);
+  }
+
+  strong {
+    display: block;
+    color: $color-white;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+  }
+}
+
+.pfp-how-ties {
+  margin: 0 0 $spacing-md;
+  padding-left: 1.25rem;
+  color: $color-muted;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+}
+
+.pfp-how-note {
+  margin-bottom: $spacing-lg !important;
+  font-size: 0.875rem !important;
+}
+
+.pfp-how-back {
+  margin-bottom: 0 !important;
 }
