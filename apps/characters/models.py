@@ -58,7 +58,9 @@ class Character(models.Model):
         return f"/static/images/characters/{self.slug}.jpg"
 
     def get_image_url(self, request=None) -> str:
-        if self.image:
+        # Prefer uploaded media only when the file still exists. On hosts like
+        # Railway, media can vanish after redeploy while the DB path remains.
+        if self.image and self.image.name and self.image.storage.exists(self.image.name):
             url = self.image.url
         else:
             url = self.resolve_static_image_path()

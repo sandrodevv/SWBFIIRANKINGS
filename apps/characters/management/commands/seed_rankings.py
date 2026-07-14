@@ -274,9 +274,17 @@ class Command(BaseCommand):
             "--characters-only",
             action="store_true",
             help=(
-                "Only create/update characters (with descriptions and combat types) "
-                "and attach images from frontend/static/images/characters/. "
-                "Does not create players, rankings, or votes."
+                "Only create/update characters (with descriptions and combat types). "
+                "Uses static images from frontend/static/images/characters/ "
+                "(recommended for Railway). Does not create players, rankings, or votes."
+            ),
+        )
+        parser.add_argument(
+            "--attach-images",
+            action="store_true",
+            help=(
+                "Copy static character images into Character.image (media/). "
+                "Not recommended on ephemeral hosts like Railway."
             ),
         )
         parser.add_argument(
@@ -289,13 +297,30 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         force = options["force"]
         characters_only = options["characters_only"]
+        attach_images = options["attach_images"]
         replace_images = options["replace_images"]
         random.seed(42)
 
         characters_created = upsert_characters()
-        images_attached, missing_images = attach_static_images(
-            replace_existing=replace_images
-        )
+        images_attached = 0
+        missing_images = []
+
+        if characters_only and not attach_images:
+            # Prefer repo static files so images survive redeploys.
+            cleared = Character.objects.exclude(image="").update(image="")
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Characters-only seed complete: {characters_created} new characters, "
+                    f"{cleared} media image fields cleared (using static files), "
+                    f"{Character.objects.count()} characters total."
+                )
+            )
+            return
+
+        if attach_images or not characters_only:
+            images_attached, missing_images = attach_static_images(
+                replace_existing=replace_images
+            )
 
         if characters_only:
             self.stdout.write(
