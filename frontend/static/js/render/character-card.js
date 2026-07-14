@@ -66,8 +66,12 @@ export function renderCharacterCard(character) {
     body.appendChild(meta);
     body.appendChild(stat);
   } else {
+    const empty = document.createElement("p");
+    empty.className = "card-stat";
+    empty.textContent = "No ranked players yet";
     body.appendChild(title);
     body.appendChild(meta);
+    body.appendChild(empty);
   }
 
   const actions = document.createElement("div");

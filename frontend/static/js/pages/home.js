@@ -1,29 +1,50 @@
-import { getChampions, getRecentVotes } from "../api/client.js";
-import { renderChampionCard } from "../render/champion-card.js";
+import { getCharacters, getRecentVotes } from "../api/client.js";
+import { renderCharacterCard } from "../render/character-card.js";
 import { renderRecentVotes } from "../render/recent-votes.js";
 import { clearElement, showError, showLoading } from "../utils/dom.js";
 import { createElement } from "../utils/dom.js";
 
-async function loadChampions() {
+async function getAllCharacters() {
+  const pageSize = 50;
+  let page = 1;
+  let all = [];
+
+  while (true) {
+    const data = await getCharacters(page);
+    // API may return paginated { results } or a bare list
+    const results = data.results || data;
+    all = all.concat(results);
+    if (!data.next) break;
+    page += 1;
+    if (page > 20) break;
+  }
+
+  return all;
+}
+
+async function loadCharacters() {
   const container = document.querySelector('[data-container="champions"]');
   if (!container) return;
 
   showLoading(container);
 
   try {
-    const champions = await getChampions();
+    const characters = await getAllCharacters();
     clearElement(container);
 
-    if (!champions.length) {
-      container.appendChild(createElement("div", "empty-state", "No champions yet."));
+    if (!characters.length) {
+      container.appendChild(createElement("div", "empty-state", "No characters yet."));
       return;
     }
 
-    champions.forEach((champion) => {
-      container.appendChild(renderChampionCard(champion));
+    const heroes = characters.filter((c) => c.side === "hero");
+    const villains = characters.filter((c) => c.side === "villain");
+
+    [...heroes, ...villains].forEach((character) => {
+      container.appendChild(renderCharacterCard(character));
     });
   } catch (error) {
-    showError(container, "Failed to load champions.");
+    showError(container, "Failed to load characters.");
     console.error(error);
   }
 }
@@ -44,6 +65,6 @@ async function loadRecentVotes() {
 }
 
 export function initHomePage() {
-  loadChampions();
+  loadCharacters();
   loadRecentVotes();
 }
