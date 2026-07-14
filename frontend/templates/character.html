@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Character Rankings{% endblock %}
+{% block body_class %}page-character{% endblock %}
+
+{% block content %}
+<section id="character-header" class="character-header section">
+    <div class="container" data-container="character-header"></div>
+</section>
+
+<section id="podium-top3" class="podium-section section">
+    <div class="container">
+        <div class="podium-grid" data-container="podium"></div>
+    </div>
+</section>
+
+<section id="leaderboard-4-10" class="leaderboard-section section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Leaderboard</h2>
+            <p>Ranks 4–10</p>
+        </div>
+        <div class="leaderboard-list" data-container="leaderboard"></div>
+    </div>
+</section>
+
+<section id="inline-rankings" class="inline-rankings-section section" hidden>
+    <div class="container">
+        <div class="section-header">
+            <h2>Other Players</h2>
+            <p>Everyone outside the top 10</p>
+        </div>
+        <div class="inline-rankings-list" data-container="inline-rankings"></div>
+    </div>
+</section>
+{% endblock %}

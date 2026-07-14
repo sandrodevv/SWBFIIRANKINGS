@@ -1,0 +1,131 @@
+.card {
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+  transition: 1s ease-in-out transform $transition-base, box-shadow $transition-base, border-color $transition-base;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(59, 130, 246, 0.25);
+    box-shadow: $shadow-card;
+  }
+}
+
+.card-image-wrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: linear-gradient(135deg, $color-bg-elevated, darken($color-bg, 3%));
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform $transition-slow;
+  }
+
+  .card:hover & img {
+    transform: scale(1.05);
+  }
+}
+
+.card-image-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-family: $font-display;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.3);
+
+  &.fallback-hero {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(17, 24, 39, 0.9));
+  }
+
+  &.fallback-villain {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(17, 24, 39, 0.9));
+  }
+}
+
+.card-body {
+  padding: $spacing-lg;
+}
+
+.card-title {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: $spacing-sm;
+}
+
+.card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.card-stat {
+  font-size: 0.875rem;
+  color: $color-muted;
+
+  strong {
+    color: $color-white;
+    font-weight: 600;
+  }
+}
+
+.character-card,
+.champion-card {
+  @extend .card;
+}
+
+.character-card--hero,
+.champion-card--hero {
+
+  transition: 0.5s ease-in-out;
+  &:hover {
+    transition: 0.5s ease-in-out;
+    border-color: rgba(25, 111, 248, 0.45);
+    box-shadow:
+      $shadow-card,
+      0 0 28px rgba(25, 111, 248, 0.35);
+
+  }
+}
+
+.character-card--villain,
+.champion-card--villain {
+  transition: 0.5s ease-in-out;
+  &:hover {
+    border-color: rgba(127, 29, 29, 0.6);
+    box-shadow:
+      $shadow-card,
+      0 0 28px rgba(185, 28, 28, 0.4);
+    transition: 0.5s ease-in-out;
+  }
+}
+
+.champion-card {
+  border-color: rgba(212, 168, 67, 0.2);
+}
+
+.champion-label {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  color: $color-gold-light;
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: $spacing-sm;
+}
+
+.card-actions {
+  margin-top: $spacing-md;
+}

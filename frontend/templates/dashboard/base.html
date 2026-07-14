@@ -1,0 +1,63 @@
+{% load static sass_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Moderator Dashboard{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% sass_src 'scss/main.scss' %}">
+</head>
+<body class="page-dashboard">
+    <div id="app">
+        <header class="site-header dashboard-header">
+            <div class="container header-inner">
+                <a href="{% url 'dashboard-home' %}" class="logo">
+                    {% include "partials/logo_lightsaber.html" with color="blue" facing="right" %}
+                    <span class="logo-text-group">
+                        <span class="logo-accent">SWBFII</span>
+                        <span class="logo-text">{% if request.user.is_superuser %}Admin Dashboard{% else %}Moderator Dashboard{% endif %}</span>
+                    </span>
+                    {% include "partials/logo_lightsaber.html" with color="red" facing="left" %}
+                </a>
+                <nav class="site-nav">
+                    {% if request.user.is_authenticated %}
+                        <span class="dashboard-user">
+                            {{ request.user.username }}
+                            {% if request.user.is_superuser %}
+                                <span class="dashboard-role">admin</span>
+                            {% else %}
+                                <span class="dashboard-role">moderator</span>
+                            {% endif %}
+                        </span>
+                        {% if request.user.is_superuser %}
+                            <a href="/admin/">Django admin</a>
+                        {% endif %}
+                        <form method="post" action="{% url 'dashboard-logout' %}" class="dashboard-logout-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-ghost">Log out</button>
+                        </form>
+                    {% endif %}
+                    <a href="/">Public site</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="site-main dashboard-main">
+            <div class="container">
+                {% if messages %}
+                    <div class="dashboard-messages">
+                        {% for message in messages %}
+                            <p class="dashboard-message dashboard-message--{{ message.tags }}">{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% block content %}{% endblock %}
+            </div>
+        </main>
+    </div>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

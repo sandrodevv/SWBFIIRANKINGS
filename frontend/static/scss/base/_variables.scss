@@ -1,0 +1,43 @@
+// Design tokens
+$color-bg: #0a0e17;
+$color-bg-elevated: #111827;
+$color-bg-card: rgba(17, 24, 39, 0.85);
+$color-border: rgba(255, 255, 255, 0.08);
+$color-blue: #3b82f6;
+$color-blue-light: #60a5fa;
+$color-gold: #d4a843;
+$color-gold-light: #f0c674;
+$color-silver: #c0c5ce;
+$color-bronze: #cd7f32;
+$color-white: #f8fafc;
+$color-muted: #94a3b8;
+$color-hero: #3b82f6;
+$color-villain: #ef4444;
+
+$font-display: "Rajdhani", sans-serif;
+$font-body: "Inter", sans-serif;
+
+$spacing-xs: 0.5rem;
+$spacing-sm: 0.75rem;
+$spacing-md: 1rem;
+$spacing-lg: 1.5rem;
+$spacing-xl: 2rem;
+$spacing-2xl: 3rem;
+$spacing-3xl: 4rem;
+
+$radius-sm: 0.375rem;
+$radius-md: 0.75rem;
+$radius-lg: 1rem;
+$radius-xl: 1.25rem;
+
+$shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+$shadow-glow-blue: 0 0 24px rgba(59, 130, 246, 0.25);
+$shadow-glow-gold: 0 0 32px rgba(212, 168, 67, 0.3);
+
+$transition-fast: 0.15s ease;
+$transition-base: 0.25s ease;
+$transition-slow: 0.4s ease;
+
+$container-max: 1200px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;

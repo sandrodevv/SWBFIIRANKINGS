@@ -1,0 +1,107 @@
+.podium-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+  align-items: end;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: 1.2fr 1.4fr 1fr;
+    gap: 3rem;
+  }
+}
+
+.podium-card {
+  position: relative;
+  border-radius: $radius-xl;
+  padding: $spacing-xl $spacing-lg;
+  text-align: center;
+  border: 1px solid $color-border;
+  background: $color-bg-card;
+  backdrop-filter: blur(12px);
+  transition: transform $transition-base, box-shadow $transition-base;
+  animation: fadeInUp 0.5s ease backwards;
+
+  @for $i from 1 through 3 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.1}s;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-6px);
+  }
+}
+
+.podium-first {
+  order: 2;
+  border-color: rgba(212, 168, 67, 0.45);
+  background: linear-gradient(180deg, rgba(212, 168, 67, 0.12), $color-bg-card);
+  box-shadow: 0 0 32px rgba(212, 168, 67, 0.37);
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-2xl $spacing-xl;
+    transform: scale(1.05);
+
+    &:hover {
+      transform: scale(1.05) translateY(-6px);
+    }
+  }
+
+  .podium-rank {
+    color: $color-gold-light;
+    font-size: 2rem;
+  }
+}
+
+.podium-second {
+  order: 1;
+  border-color: rgba(192, 197, 206, 0.35);
+  background: linear-gradient(180deg, rgba(192, 197, 206, 0.08), $color-bg-card);
+  box-shadow: 0 0 32px rgba(255, 255, 255, 0.22);
+
+  .podium-rank {
+    color: $color-silver;
+  }
+}
+
+.podium-third {
+  order: 3;
+  border-color: rgba(205, 127, 50, 0.35);
+  background: linear-gradient(180deg, rgba(205, 127, 50, 0.08), $color-bg-card);
+  box-shadow: 0 0 32px rgba(185, 108, 0, 0.21);
+
+  .podium-rank {
+    color: $color-bronze;
+  }
+}
+
+.podium-rank {
+  font-family: $font-display;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: $spacing-sm;
+}
+
+.podium-player {
+  font-family: $font-display;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  margin-bottom: $spacing-xs;
+  word-break: break-word;
+}
+
+.podium-votes {
+  color: $color-muted;
+  font-size: 0.9375rem;
+  margin-bottom: $spacing-md;
+
+  strong {
+    color: $color-white;
+  }
+}
+
+.podium-actions {
+  display: flex;
+  justify-content: center;
+}

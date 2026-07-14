@@ -1,0 +1,894 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}{% if is_admin %}Admin Dashboard{% else %}Moderator Dashboard{% endif %}{% endblock %}
+
+{% block content %}
+<section class="dashboard-home section">
+    <div class="section-header">
+        {% if is_admin %}
+            <h1>Administrator overview</h1>
+            <p>Live vote activity, roster health, and player management</p>
+            <p class="pRed">Administrator</p>
+        {% else %}
+            <h1>Player management</h1>
+            <p>Add players or complete missing Hero &amp; Villain / Duelist assignments</p>
+            <p class="pRed">Moderators only</p>
+        {% endif %}
+    </div>
+
+    {% if overview %}
+    <div class="dashboard-overview">
+        <div class="dashboard-stat-grid">
+            <div class="dashboard-stat">
+                <span class="dashboard-stat__label">Players</span>
+                <span class="dashboard-stat__value">{{ overview.counts.players }}</span>
+            </div>
+            <div class="dashboard-stat">
+                <span class="dashboard-stat__label">Rankings</span>
+                <span class="dashboard-stat__value">{{ overview.counts.rankings }}</span>
+            </div>
+            <div class="dashboard-stat">
+                <span class="dashboard-stat__label">Duelists</span>
+                <span class="dashboard-stat__value">{{ overview.counts.duelists }}</span>
+                <span class="dashboard-stat__meta">EU {{ overview.counts.duelists_eu }} · US {{ overview.counts.duelists_us }} · AU {{ overview.counts.duelists_au }}</span>
+            </div>
+            <div class="dashboard-stat">
+                <span class="dashboard-stat__label">Incomplete</span>
+                <span class="dashboard-stat__value">{{ overview.counts.incomplete_assignments }}</span>
+                <span class="dashboard-stat__meta">missing assignments</span>
+            </div>
+            <div class="dashboard-stat">
+                <span class="dashboard-stat__label">Votes this week</span>
+                <span class="dashboard-stat__value">{{ overview.counts.total_votes_this_period }}</span>
+                <span class="dashboard-stat__meta">{{ overview.counts.votes_this_period }} ranking · {{ overview.counts.duelist_votes_this_period }} duelist</span>
+            </div>
+            <div class="dashboard-stat">
+                <span class="dashboard-stat__label">Period ends</span>
+                <span class="dashboard-stat__value">{{ overview.period.days_left }}d {{ overview.period.hours_left }}h</span>
+                <span class="dashboard-stat__meta">{{ overview.period.ends_at|date:"M j, H:i" }} UTC</span>
+            </div>
+        </div>
+
+        <div class="dashboard-overview-grid{% if not is_admin %} dashboard-overview-grid--shared{% endif %}">
+            <div class="dashboard-card">
+                <h2>Vote totals</h2>
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Weekly</th>
+                            <th>Last week</th>
+                            <th>All-time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Character rankings</td>
+                            <td>{{ overview.votes.ranking_weekly }}</td>
+                            <td>{{ overview.votes.ranking_last_week }}</td>
+                            <td>{{ overview.votes.ranking_all_time }}</td>
+                        </tr>
+                        <tr>
+                            <td>Duelists</td>
+                            <td>{{ overview.votes.duelist_weekly }}</td>
+                            <td>{{ overview.votes.duelist_last_week }}</td>
+                            <td>{{ overview.votes.duelist_all_time }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            {% if is_admin %}
+            <div class="dashboard-card">
+                <h2>Top players (all-time)</h2>
+                {% if overview.top_players %}
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Player</th>
+                            <th>Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in overview.top_players %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td><a href="/players/{{ player.slug }}/">{{ player.nickname }}</a></td>
+                            <td>{{ player.all_time_votes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No players yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Top weekly rankings</h2>
+                {% if overview.top_weekly_rankings %}
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Character</th>
+                            <th>Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ranking in overview.top_weekly_rankings %}
+                        <tr>
+                            <td>{{ ranking.player.nickname }}</td>
+                            <td>{{ ranking.character.name }}</td>
+                            <td>{{ ranking.votes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No ranking votes yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Top weekly duelists</h2>
+                {% if overview.top_duelists %}
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Region</th>
+                            <th>Votes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for duelist in overview.top_duelists %}
+                        <tr>
+                            <td>{{ duelist.player.nickname }}</td>
+                            <td>{{ duelist.region|upper }} · {{ duelist.character.name }}</td>
+                            <td>{{ duelist.votes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted">No duelist votes yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Recent ranking votes</h2>
+                {% if overview.recent_votes %}
+                <ul class="dashboard-activity">
+                    {% for vote in overview.recent_votes %}
+                    <li>
+                        <span class="dashboard-activity__main">{{ vote.ranking.player.nickname }} · {{ vote.character.name }}</span>
+                        <span class="dashboard-activity__meta">{{ vote.voted_at|timesince }} ago</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No votes this period yet.</p>
+                {% endif %}
+            </div>
+
+            <div class="dashboard-card">
+                <h2>Recent duelist votes</h2>
+                {% if overview.recent_duelist_votes %}
+                <ul class="dashboard-activity">
+                    {% for vote in overview.recent_duelist_votes %}
+                    <li>
+                        <span class="dashboard-activity__main">{{ vote.duelist.player.nickname }} · {{ vote.duelist.region|upper }}</span>
+                        <span class="dashboard-activity__meta">{{ vote.voted_at|timesince }} ago</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No duelist votes yet.</p>
+                {% endif %}
+            </div>
+
+            {% if overview.incomplete_players %}
+            <div class="dashboard-card">
+                <h2>Incomplete assignments</h2>
+                <ul class="dashboard-activity">
+                    {% for player in overview.incomplete_players %}
+                    <li>
+                        <span class="dashboard-activity__main">{{ player.nickname }}</span>
+                        <span class="dashboard-activity__meta">needs setup</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="dashboard-card">
+                <h2>Recent staff logins</h2>
+                {% if overview.recent_logins %}
+                <ul class="dashboard-activity">
+                    {% for entry in overview.recent_logins %}
+                    <li>
+                        <span class="dashboard-activity__main">{{ entry.user.username }} · {{ entry.ip_address }}</span>
+                        <span class="dashboard-activity__meta">{{ entry.logged_in_at|timesince }} ago</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No login history yet.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="section-header dashboard-manage-header">
+            <h2>Player management</h2>
+            <p>Add, complete, or modify player assignments</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="dashboard-grid dashboard-grid--manage">
+        <div class="dashboard-card dashboard-card--narrow">
+            <h2>Add player</h2>
+            <p class="text-muted">Register for rankings, duelist, or both.</p>
+
+            <form method="post" class="dashboard-form" id="add-player-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="add">
+                {% if form.non_field_errors %}
+                    <div class="form-errors">{{ form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ form.nickname.id_for_label }}">Nickname</label>
+                    {{ form.nickname }}
+                    {{ form.nickname.errors }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.username.id_for_label }}">Username (optional)</label>
+                    {{ form.username }}
+                    {{ form.username.errors }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.discord_url.id_for_label }}">{{ form.discord_url.label }}</label>
+                    {{ form.discord_url }}
+                    {{ form.discord_url.errors }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.steam_url.id_for_label }}">{{ form.steam_url.label }}</label>
+                    {{ form.steam_url }}
+                    {{ form.steam_url.errors }}
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.twitch_url.id_for_label }}">{{ form.twitch_url.label }}</label>
+                    {{ form.twitch_url }}
+                    {{ form.twitch_url.errors }}
+                </div>
+
+                <fieldset class="form-fieldset">
+                    <label class="form-check">
+                        {{ form.register_character_rankings }}
+                        <span>{{ form.register_character_rankings.label }}</span>
+                    </label>
+                    {{ form.register_character_rankings.errors }}
+                    <div class="form-fieldset-body" data-toggle-section="register_character_rankings">
+                        <div class="form-field">
+                            <label for="{{ form.hero_character.id_for_label }}">Hero</label>
+                            {{ form.hero_character }}
+                            {{ form.hero_character.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.villain_character.id_for_label }}">Villain</label>
+                            {{ form.villain_character }}
+                            {{ form.villain_character.errors }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-fieldset">
+                    <label class="form-check">
+                        {{ form.register_duelist }}
+                        <span>{{ form.register_duelist.label }}</span>
+                    </label>
+                    {{ form.register_duelist.errors }}
+                    <div class="form-fieldset-body" data-toggle-section="register_duelist">
+                        <div class="form-field">
+                            <label for="{{ form.duelist_region.id_for_label }}">Region</label>
+                            {{ form.duelist_region }}
+                            {{ form.duelist_region.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.duelist_character.id_for_label }}">Saber Hero</label>
+                            {{ form.duelist_character }}
+                            {{ form.duelist_character.errors }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-primary btn-block">Add player</button>
+            </form>
+        </div>
+
+        <div class="dashboard-card dashboard-card--narrow">
+            <h2>Complete assignments</h2>
+            <p class="text-muted">Add missing Hero &amp; Villain or Duelist to an existing player.</p>
+
+            {% if complete_form.fields.player.queryset.exists %}
+            <form method="post" class="dashboard-form" id="complete-player-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="complete">
+                {% if complete_form.non_field_errors %}
+                    <div class="form-errors">{{ complete_form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ complete_form.player.id_for_label }}">Player</label>
+                    {{ complete_form.player }}
+                    {{ complete_form.player.errors }}
+                </div>
+
+                <p class="text-muted" data-complete-hint>Select a player to see available assignments.</p>
+
+                <fieldset class="form-fieldset" data-complete-section="rankings" hidden>
+                    <label class="form-check">
+                        {{ complete_form.assign_character_rankings }}
+                        <span>{{ complete_form.assign_character_rankings.label }}</span>
+                    </label>
+                    {{ complete_form.assign_character_rankings.errors }}
+                    <div class="form-fieldset-body" data-toggle-section="assign_character_rankings">
+                        <div class="form-field">
+                            <label for="{{ complete_form.hero_character.id_for_label }}">Hero</label>
+                            {{ complete_form.hero_character }}
+                            {{ complete_form.hero_character.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ complete_form.villain_character.id_for_label }}">Villain</label>
+                            {{ complete_form.villain_character }}
+                            {{ complete_form.villain_character.errors }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-fieldset" data-complete-section="duelist" hidden>
+                    <label class="form-check">
+                        {{ complete_form.assign_duelist }}
+                        <span>{{ complete_form.assign_duelist.label }}</span>
+                    </label>
+                    {{ complete_form.assign_duelist.errors }}
+                    <div class="form-fieldset-body" data-toggle-section="assign_duelist">
+                        <div class="form-field">
+                            <label for="{{ complete_form.duelist_region.id_for_label }}">Region</label>
+                            {{ complete_form.duelist_region }}
+                            {{ complete_form.duelist_region.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ complete_form.duelist_character.id_for_label }}">Saber Hero</label>
+                            {{ complete_form.duelist_character }}
+                            {{ complete_form.duelist_character.errors }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-primary btn-block">Save assignments</button>
+            </form>
+            {% else %}
+            <p class="text-muted">Every player already has Hero &amp; Villain and Duelist assignments.</p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-card dashboard-card--narrow">
+            <h2>Modify assignments</h2>
+            <p class="text-muted">Change a player&apos;s ranking or duelist character. Switching a character resets that assignment&apos;s votes to 0.</p>
+
+            {% if modify_form.fields.player.queryset.exists %}
+            <form method="post" class="dashboard-form" id="modify-player-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="modify">
+                {% if modify_form.non_field_errors %}
+                    <div class="form-errors">{{ modify_form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ modify_form.player.id_for_label }}">Player</label>
+                    {{ modify_form.player }}
+                    {{ modify_form.player.errors }}
+                </div>
+
+                <p class="text-muted" data-modify-hint>Select a player to load current assignments.</p>
+
+                <fieldset class="form-fieldset" data-modify-section="rankings" hidden>
+                    <label class="form-check">
+                        {{ modify_form.modify_character_rankings }}
+                        <span>{{ modify_form.modify_character_rankings.label }}</span>
+                    </label>
+                    {{ modify_form.modify_character_rankings.errors }}
+                    <p class="form-note">Changing Hero or Villain resets that ranking&apos;s votes. Duelist votes are not affected.</p>
+                    <div class="form-fieldset-body" data-toggle-section="modify_character_rankings">
+                        <div class="form-field">
+                            <label for="{{ modify_form.hero_character.id_for_label }}">Hero</label>
+                            {{ modify_form.hero_character }}
+                            {{ modify_form.hero_character.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ modify_form.villain_character.id_for_label }}">Villain</label>
+                            {{ modify_form.villain_character }}
+                            {{ modify_form.villain_character.errors }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-fieldset" data-modify-section="duelist" hidden>
+                    <label class="form-check">
+                        {{ modify_form.modify_duelist }}
+                        <span>{{ modify_form.modify_duelist.label }}</span>
+                    </label>
+                    {{ modify_form.modify_duelist.errors }}
+                    <p class="form-note">Changing duelist character resets duelist votes to 0. Region-only changes keep votes.</p>
+                    <div class="form-fieldset-body" data-toggle-section="modify_duelist">
+                        <div class="form-field">
+                            <label for="{{ modify_form.duelist_region.id_for_label }}">Region</label>
+                            {{ modify_form.duelist_region }}
+                            {{ modify_form.duelist_region.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ modify_form.duelist_character.id_for_label }}">Saber Hero</label>
+                            {{ modify_form.duelist_character }}
+                            {{ modify_form.duelist_character.errors }}
+                        </div>
+                    </div>
+                </fieldset>
+
+                <button type="submit" class="btn btn-primary btn-block">Save changes</button>
+            </form>
+            {% else %}
+            <p class="text-muted">No players with assignments to modify yet.</p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-card dashboard-card--narrow">
+            <h2>Profile links</h2>
+            <p class="text-muted">Set or remove Discord, Steam, and Twitch profile URLs shown on the player page. Clear a field or check Remove to delete a link.</p>
+
+            {% if links_form.fields.player.queryset.exists %}
+            <form method="post" class="dashboard-form" id="player-links-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="links">
+                {% if links_form.non_field_errors %}
+                    <div class="form-errors">{{ links_form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ links_form.player.id_for_label }}">Player</label>
+                    {{ links_form.player }}
+                    {{ links_form.player.errors }}
+                </div>
+
+                <p class="text-muted" data-links-hint>Select a player to load current links.</p>
+
+                <div class="form-field">
+                    <label for="{{ links_form.discord_url.id_for_label }}">{{ links_form.discord_url.label }}</label>
+                    {{ links_form.discord_url }}
+                    {{ links_form.discord_url.errors }}
+                </div>
+                <label class="form-check">
+                    {{ links_form.clear_discord }}
+                    <span>{{ links_form.clear_discord.label }}</span>
+                </label>
+                {{ links_form.clear_discord.errors }}
+
+                <div class="form-field">
+                    <label for="{{ links_form.steam_url.id_for_label }}">{{ links_form.steam_url.label }}</label>
+                    {{ links_form.steam_url }}
+                    {{ links_form.steam_url.errors }}
+                </div>
+                <label class="form-check">
+                    {{ links_form.clear_steam }}
+                    <span>{{ links_form.clear_steam.label }}</span>
+                </label>
+                {{ links_form.clear_steam.errors }}
+
+                <div class="form-field">
+                    <label for="{{ links_form.twitch_url.id_for_label }}">{{ links_form.twitch_url.label }}</label>
+                    {{ links_form.twitch_url }}
+                    {{ links_form.twitch_url.errors }}
+                </div>
+                <label class="form-check">
+                    {{ links_form.clear_twitch }}
+                    <span>{{ links_form.clear_twitch.label }}</span>
+                </label>
+                {{ links_form.clear_twitch.errors }}
+
+                <button type="submit" class="btn btn-primary btn-block">Save profile links</button>
+            </form>
+            {% else %}
+            <p class="text-muted">No players yet.</p>
+            {% endif %}
+        </div>
+
+        {% if is_admin %}
+        <div class="dashboard-card dashboard-card--narrow">
+            <h2>Name effects</h2>
+            <p class="text-muted">Enable burning, smoke, and/or glitch nickname animations site-wide.</p>
+
+            {% if overview.name_effects %}
+            <div class="effects-roster" data-effects-roster>
+                <div class="effects-roster__counts">
+                    <span><strong>{{ overview.name_effects.any }}</strong> with effects</span>
+                    <span>Burn {{ overview.name_effects.burning }}</span>
+                    <span>Smoke {{ overview.name_effects.smoke }}</span>
+                    <span>Glitch {{ overview.name_effects.glitch }}</span>
+                </div>
+
+                <div class="form-field effects-roster__filter">
+                    <label for="effects-roster-filter">Show</label>
+                    <select id="effects-roster-filter" data-effects-filter>
+                        <option value="any">All with effects</option>
+                        <option value="burning">Burning</option>
+                        <option value="smoke">Smoke</option>
+                        <option value="glitch">Glitch</option>
+                    </select>
+                </div>
+
+                <div class="effects-roster__list" data-effects-list>
+                    {% for player in overview.name_effects.players %}
+                    <div
+                        class="effects-roster__row"
+                        data-burning="{{ player.name_burning|yesno:'1,0' }}"
+                        data-smoke="{{ player.name_smoke|yesno:'1,0' }}"
+                        data-glitch="{{ player.name_glitch|yesno:'1,0' }}"
+                    >
+                        <a href="/players/{{ player.slug }}/">{{ player.nickname }}</a>
+                        <span class="effects-roster__tags">
+                            {% if player.name_burning %}<span class="effects-tag effects-tag--burn">burn</span>{% endif %}
+                            {% if player.name_smoke %}<span class="effects-tag effects-tag--smoke">smoke</span>{% endif %}
+                            {% if player.name_glitch %}<span class="effects-tag effects-tag--glitch">glitch</span>{% endif %}
+                        </span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted effects-roster__empty" data-effects-empty>No players have name effects yet.</p>
+                    {% endfor %}
+                    <p class="text-muted effects-roster__empty" data-effects-filtered-empty hidden>No players match this filter.</p>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if burning_form.fields.player.queryset.exists %}
+            <form method="post" class="dashboard-form" id="name-effects-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_action" value="effects">
+                {% if burning_form.non_field_errors %}
+                    <div class="form-errors">{{ burning_form.non_field_errors }}</div>
+                {% endif %}
+
+                <div class="form-field">
+                    <label for="{{ burning_form.player.id_for_label }}">Player</label>
+                    {{ burning_form.player }}
+                    {{ burning_form.player.errors }}
+                </div>
+
+                <p class="text-muted" data-effects-hint>Select a player to see their current effects.</p>
+
+                <label class="form-check">
+                    {{ burning_form.name_burning }}
+                    <span>{{ burning_form.name_burning.label }}</span>
+                </label>
+                {{ burning_form.name_burning.errors }}
+
+                <label class="form-check">
+                    {{ burning_form.name_smoke }}
+                    <span>{{ burning_form.name_smoke.label }}</span>
+                </label>
+                {{ burning_form.name_smoke.errors }}
+
+                <label class="form-check">
+                    {{ burning_form.name_glitch }}
+                    <span>{{ burning_form.name_glitch.label }}</span>
+                </label>
+                {{ burning_form.name_glitch.errors }}
+
+                <button type="submit" class="btn btn-primary btn-block">Save name effects</button>
+            </form>
+            {% else %}
+            <p class="text-muted">No players yet.</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+{{ player_flags|json_script:"player-flags-data" }}
+{{ player_assignments|json_script:"player-assignments-data" }}
+{{ player_effects|json_script:"player-effects-data" }}
+{{ player_links|json_script:"player-links-data" }}
+<script>
+(function () {
+  function syncSection(checkboxId, sectionName) {
+    var checkbox = document.getElementById(checkboxId);
+    var section = document.querySelector('[data-toggle-section="' + sectionName + '"]');
+    if (!checkbox || !section) return;
+    function update() {
+      section.hidden = !checkbox.checked;
+      section.querySelectorAll("select, input").forEach(function (el) {
+        el.disabled = !checkbox.checked;
+      });
+    }
+    checkbox.addEventListener("change", update);
+    update();
+  }
+
+  syncSection("id_register_character_rankings", "register_character_rankings");
+  syncSection("id_register_duelist", "register_duelist");
+  syncSection("id_assign_character_rankings", "assign_character_rankings");
+  syncSection("id_assign_duelist", "assign_duelist");
+  syncSection("id_modify-modify_character_rankings", "modify_character_rankings");
+  syncSection("id_modify-modify_duelist", "modify_duelist");
+
+  var flagsEl = document.getElementById("player-flags-data");
+  var flags = flagsEl ? JSON.parse(flagsEl.textContent) : {};
+  var playerSelect = document.getElementById("id_player");
+  var rankingsSection = document.querySelector('[data-complete-section="rankings"]');
+  var duelistSection = document.querySelector('[data-complete-section="duelist"]');
+  var hint = document.querySelector("[data-complete-hint]");
+  var rankingsCheckbox = document.getElementById("id_assign_character_rankings");
+  var duelistCheckbox = document.getElementById("id_assign_duelist");
+
+  function syncCompleteForm() {
+    if (!playerSelect || !rankingsSection || !duelistSection) return;
+    var selected = playerSelect.value;
+    var info = flags[selected];
+
+    if (!info) {
+      rankingsSection.hidden = true;
+      duelistSection.hidden = true;
+      if (rankingsCheckbox) {
+        rankingsCheckbox.checked = false;
+        rankingsCheckbox.dispatchEvent(new Event("change"));
+      }
+      if (duelistCheckbox) {
+        duelistCheckbox.checked = false;
+        duelistCheckbox.dispatchEvent(new Event("change"));
+      }
+      if (hint) hint.textContent = "Select a player to see available assignments.";
+      return;
+    }
+
+    rankingsSection.hidden = !info.needs_rankings;
+    duelistSection.hidden = !info.needs_duelist;
+
+    if (!info.needs_rankings && rankingsCheckbox) {
+      rankingsCheckbox.checked = false;
+      rankingsCheckbox.dispatchEvent(new Event("change"));
+    }
+    if (!info.needs_duelist && duelistCheckbox) {
+      duelistCheckbox.checked = false;
+      duelistCheckbox.dispatchEvent(new Event("change"));
+    }
+
+    if (hint) {
+      if (info.needs_rankings && info.needs_duelist) {
+        hint.textContent = "Missing both Hero & Villain rankings and Best Duelist.";
+      } else if (info.needs_rankings) {
+        hint.textContent = "Missing Hero & Villain rankings only.";
+      } else if (info.needs_duelist) {
+        hint.textContent = "Missing Best Duelist only.";
+      }
+    }
+  }
+
+  if (playerSelect) {
+    playerSelect.addEventListener("change", syncCompleteForm);
+    syncCompleteForm();
+  }
+
+  var assignmentsEl = document.getElementById("player-assignments-data");
+  var assignments = assignmentsEl ? JSON.parse(assignmentsEl.textContent) : {};
+  var modifyPlayerSelect = document.getElementById("id_modify-player");
+  var modifyRankingsSection = document.querySelector('[data-modify-section="rankings"]');
+  var modifyDuelistSection = document.querySelector('[data-modify-section="duelist"]');
+  var modifyHint = document.querySelector("[data-modify-hint]");
+  var modifyRankingsCheckbox = document.getElementById("id_modify-modify_character_rankings");
+  var modifyDuelistCheckbox = document.getElementById("id_modify-modify_duelist");
+  var modifyHero = document.getElementById("id_modify-hero_character");
+  var modifyVillain = document.getElementById("id_modify-villain_character");
+  var modifyRegion = document.getElementById("id_modify-duelist_region");
+  var modifyDuelistCharacter = document.getElementById("id_modify-duelist_character");
+
+  function setSelectValue(select, value) {
+    if (!select) return;
+    select.value = value == null ? "" : String(value);
+  }
+
+  function syncModifyForm() {
+    if (!modifyPlayerSelect || !modifyRankingsSection || !modifyDuelistSection) return;
+    var selected = modifyPlayerSelect.value;
+    var info = assignments[selected];
+
+    if (!info) {
+      modifyRankingsSection.hidden = true;
+      modifyDuelistSection.hidden = true;
+      if (modifyRankingsCheckbox) {
+        modifyRankingsCheckbox.checked = false;
+        modifyRankingsCheckbox.dispatchEvent(new Event("change"));
+      }
+      if (modifyDuelistCheckbox) {
+        modifyDuelistCheckbox.checked = false;
+        modifyDuelistCheckbox.dispatchEvent(new Event("change"));
+      }
+      if (modifyHint) modifyHint.textContent = "Select a player to load current assignments.";
+      return;
+    }
+
+    modifyRankingsSection.hidden = !info.has_rankings;
+    modifyDuelistSection.hidden = !info.has_duelist;
+
+    if (info.has_rankings) {
+      setSelectValue(modifyHero, info.hero_id);
+      setSelectValue(modifyVillain, info.villain_id);
+    }
+    if (info.has_duelist) {
+      setSelectValue(modifyRegion, info.duelist_region);
+      setSelectValue(modifyDuelistCharacter, info.duelist_character_id);
+    }
+
+    if (!info.has_rankings && modifyRankingsCheckbox) {
+      modifyRankingsCheckbox.checked = false;
+      modifyRankingsCheckbox.dispatchEvent(new Event("change"));
+    }
+    if (!info.has_duelist && modifyDuelistCheckbox) {
+      modifyDuelistCheckbox.checked = false;
+      modifyDuelistCheckbox.dispatchEvent(new Event("change"));
+    }
+
+    if (modifyHint) {
+      if (info.has_rankings && info.has_duelist) {
+        modifyHint.textContent = "Can modify rankings and/or Best Duelist.";
+      } else if (info.has_rankings) {
+        modifyHint.textContent = "Can modify Hero & Villain rankings only.";
+      } else if (info.has_duelist) {
+        modifyHint.textContent = "Can modify Best Duelist only.";
+      }
+    }
+  }
+
+  if (modifyPlayerSelect) {
+    modifyPlayerSelect.addEventListener("change", syncModifyForm);
+    syncModifyForm();
+  }
+
+  var effectsEl = document.getElementById("player-effects-data");
+  var effectsFlags = effectsEl ? JSON.parse(effectsEl.textContent) : {};
+  var effectsPlayerSelect = document.getElementById("id_effects-player");
+  var effectsBurningCheckbox = document.getElementById("id_effects-name_burning");
+  var effectsSmokeCheckbox = document.getElementById("id_effects-name_smoke");
+  var effectsGlitchCheckbox = document.getElementById("id_effects-name_glitch");
+  var effectsHint = document.querySelector("[data-effects-hint]");
+
+  function syncEffectsForm() {
+    if (!effectsPlayerSelect || !effectsBurningCheckbox || !effectsSmokeCheckbox || !effectsGlitchCheckbox) return;
+    var selected = effectsPlayerSelect.value;
+    if (!selected) {
+      effectsBurningCheckbox.checked = false;
+      effectsSmokeCheckbox.checked = false;
+      effectsGlitchCheckbox.checked = false;
+      if (effectsHint) effectsHint.textContent = "Select a player to see their current effects.";
+      return;
+    }
+    var info = effectsFlags[selected] || {};
+    effectsBurningCheckbox.checked = !!info.burning;
+    effectsSmokeCheckbox.checked = !!info.smoke;
+    effectsGlitchCheckbox.checked = !!info.glitch;
+    if (effectsHint) {
+      var parts = [];
+      parts.push(info.burning ? "burning ON" : "burning OFF");
+      parts.push(info.smoke ? "smoke ON" : "smoke OFF");
+      parts.push(info.glitch ? "glitch ON" : "glitch OFF");
+      effectsHint.textContent = "Current: " + parts.join(", ") + ".";
+    }
+  }
+
+  if (effectsPlayerSelect) {
+    effectsPlayerSelect.addEventListener("change", syncEffectsForm);
+    syncEffectsForm();
+  }
+
+  var effectsFilter = document.querySelector("[data-effects-filter]");
+  var effectsList = document.querySelector("[data-effects-list]");
+  var effectsFilteredEmpty = document.querySelector("[data-effects-filtered-empty]");
+
+  function syncEffectsRoster() {
+    if (!effectsFilter || !effectsList) return;
+    var filter = effectsFilter.value || "any";
+    var rows = effectsList.querySelectorAll(".effects-roster__row");
+    var visible = 0;
+    rows.forEach(function (row) {
+      var show =
+        filter === "any" ||
+        (filter === "burning" && row.getAttribute("data-burning") === "1") ||
+        (filter === "smoke" && row.getAttribute("data-smoke") === "1") ||
+        (filter === "glitch" && row.getAttribute("data-glitch") === "1");
+      row.hidden = !show;
+      if (show) visible += 1;
+    });
+    if (effectsFilteredEmpty) {
+      effectsFilteredEmpty.hidden = rows.length === 0 || visible > 0;
+    }
+  }
+
+  if (effectsFilter) {
+    effectsFilter.addEventListener("change", syncEffectsRoster);
+    syncEffectsRoster();
+  }
+
+  var linksEl = document.getElementById("player-links-data");
+  var linksFlags = linksEl ? JSON.parse(linksEl.textContent) : {};
+  var linksPlayerSelect = document.getElementById("id_links-player");
+  var linksDiscord = document.getElementById("id_links-discord_url");
+  var linksSteam = document.getElementById("id_links-steam_url");
+  var linksTwitch = document.getElementById("id_links-twitch_url");
+  var linksClearDiscord = document.getElementById("id_links-clear_discord");
+  var linksClearSteam = document.getElementById("id_links-clear_steam");
+  var linksClearTwitch = document.getElementById("id_links-clear_twitch");
+  var linksHint = document.querySelector("[data-links-hint]");
+
+  function syncLinksForm() {
+    if (!linksPlayerSelect || !linksDiscord || !linksSteam || !linksTwitch) return;
+    var selected = linksPlayerSelect.value;
+    if (linksClearDiscord) linksClearDiscord.checked = false;
+    if (linksClearSteam) linksClearSteam.checked = false;
+    if (linksClearTwitch) linksClearTwitch.checked = false;
+    if (!selected) {
+      linksDiscord.value = "";
+      linksSteam.value = "";
+      linksTwitch.value = "";
+      linksDiscord.disabled = false;
+      linksSteam.disabled = false;
+      linksTwitch.disabled = false;
+      if (linksHint) linksHint.textContent = "Select a player to load current links.";
+      return;
+    }
+    var info = linksFlags[selected] || {};
+    linksDiscord.value = info.discord_url || "";
+    linksSteam.value = info.steam_url || "";
+    linksTwitch.value = info.twitch_url || "";
+    linksDiscord.disabled = false;
+    linksSteam.disabled = false;
+    linksTwitch.disabled = false;
+    if (linksHint) {
+      var parts = [];
+      if (info.discord_url) parts.push("Discord set");
+      if (info.steam_url) parts.push("Steam set");
+      if (info.twitch_url) parts.push("Twitch set");
+      linksHint.textContent = parts.length
+        ? "Current: " + parts.join(", ") + ". Clear a field or check Remove to delete a link."
+        : "No profile links set yet.";
+    }
+  }
+
+  function syncClearToggles() {
+    if (linksClearDiscord && linksDiscord) {
+      linksDiscord.disabled = linksClearDiscord.checked;
+      if (linksClearDiscord.checked) linksDiscord.value = "";
+    }
+    if (linksClearSteam && linksSteam) {
+      linksSteam.disabled = linksClearSteam.checked;
+      if (linksClearSteam.checked) linksSteam.value = "";
+    }
+    if (linksClearTwitch && linksTwitch) {
+      linksTwitch.disabled = linksClearTwitch.checked;
+      if (linksClearTwitch.checked) linksTwitch.value = "";
+    }
+  }
+
+  if (linksPlayerSelect) {
+    linksPlayerSelect.addEventListener("change", syncLinksForm);
+    syncLinksForm();
+  }
+  if (linksClearDiscord) linksClearDiscord.addEventListener("change", syncClearToggles);
+  if (linksClearSteam) linksClearSteam.addEventListener("change", syncClearToggles);
+  if (linksClearTwitch) linksClearTwitch.addEventListener("change", syncClearToggles);
+})();
+</script>
+{% endblock %}

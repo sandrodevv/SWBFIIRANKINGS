@@ -1,0 +1,165 @@
+.hero-section {
+  position: relative;
+  padding: $spacing-3xl 0;
+  text-align: center;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 1% 14%, rgba(95, 1, 1, 0.58), transparent 60%),
+      radial-gradient(ellipse at 90% 23%, rgba(39, 14, 177, 0.33), transparent 40%);
+    pointer-events: none;
+  }
+}
+
+.hero-content {
+  position: relative;
+  animation: fadeInUp 0.6s ease;
+}
+
+.hero-title {
+  margin-bottom: $spacing-md;
+  background: linear-gradient(121deg, #530000, rgba(4, 117, 255, 0.4));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.featured-champions {
+  background: linear-gradient(180deg, transparent, rgba(17, 24, 39, 0.4));
+}
+
+.home-main {
+  gap: $spacing-lg;
+  margin: 0 auto;
+  align-items: start;
+
+  @media (min-width: $breakpoint-lg) {
+    grid-template-columns: minmax(0, 1fr) 220px;
+  }
+}
+
+.home-body {
+  min-width: 0;
+}
+
+.recent-votes-panel {
+  display: flex;
+  flex-direction: row-reverse;
+  @media (min-width: $breakpoint-lg) {
+    position: static;
+    top: calc(4rem + #{$spacing-md});
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+.recent-votes-panel-inner {
+  padding: $spacing-md;
+  width: 28%;
+  @media (max-width: 1100px) {
+    width: 60%;
+  }
+  @media (max-width: 780px) {
+    width: 70%;
+  }
+  @media (max-width: 540px) {
+    width: 90%;
+  }
+  @media (max-width: 450px) {
+    width: 95%;
+  }
+  @media (max-width: 350px) {
+    width: 98%;
+  }
+}
+
+.recent-votes-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $color-white;
+  margin-bottom: $spacing-xs;
+}
+
+.recent-votes-subtitle {
+  font-size: 0.75rem;
+  color: $color-muted;
+  margin-bottom: $spacing-md;
+}
+
+.recent-votes-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  max-height: 120px;
+  overflow-y: auto;
+  padding-right: $spacing-xs;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+  }
+}
+
+.recent-votes-empty {
+  font-size: 0.8125rem;
+  color: $color-muted;
+  text-align: center;
+  padding: $spacing-md 0;
+}
+
+.recent-vote-item {
+  padding: $spacing-sm;
+  border-radius: $radius-sm;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 2px solid $color-border;
+  font-size: 0.8125rem;
+  line-height: 0.4;
+
+  &--hero {
+    border-left-color: $color-blue;
+  }
+
+  &--villain {
+    border-left-color: $color-villain;
+  }
+}
+
+.recent-vote-body {
+  color: $color-muted;
+  margin-bottom: 0.2rem;
+  padding-bottom: 7px;
+}
+
+.recent-vote-player,
+.recent-vote-character {
+  color: $color-white;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-gold-light;
+  }
+}
+
+.recent-vote-time {
+  display: block;
+  font-size: 0.6875rem;
+  color: $color-muted;
+  letter-spacing: 0.02em;
+}

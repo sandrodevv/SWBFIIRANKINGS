@@ -1,0 +1,30 @@
+{% extends "dashboard/base.html" %}
+
+{% block title %}Login — Moderator Dashboard{% endblock %}
+
+{% block content %}
+<section class="dashboard-login section">
+    <div class="dashboard-card dashboard-card--narrow">
+        <h1>Moderator login</h1>
+        <p class="text-muted">Staff accounts only.</p>
+
+        <form method="post" class="dashboard-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="form-errors">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="form-field">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {{ form.username.errors }}
+            </div>
+            <div class="form-field">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Log in</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

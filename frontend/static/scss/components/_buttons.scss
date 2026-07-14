@@ -1,0 +1,109 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-lg;
+  border-radius: $radius-md;
+  font-family: $font-display;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: transform $transition-fast, box-shadow $transition-base, background $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, $color-blue, darken($color-blue, 10%));
+  color: $color-white;
+  box-shadow: $shadow-glow-blue;
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 32px rgba(59, 130, 246, 0.45);
+  }
+}
+
+.btn-view-rankings {
+  background: linear-gradient(135deg, #cfac67, #9b7c35);
+  // background-color: $color-gold ;
+  color: #1a1208;
+  border: 1px solid rgba(212, 168, 67, 0.55);
+  box-shadow: $shadow-glow-gold;
+  transition: 0.5s ease-in-out;
+  // transition:
+  //   transform $transition-fast,
+  //   box-shadow $transition-base,
+  //   border-color $transition-base,
+  //   background $transition-base;
+
+  &:hover {
+    transition: 1s ease-in-out;
+    transform: translateY(-2px);
+    // background: linear-gradient(135deg, #c19f5e, #8b6d2a);
+  }
+  
+  &--hero:hover {
+
+    transition: 1s ease-in-out;
+    color: rgb(22, 87, 192);
+    box-shadow:
+      0 0 24px rgba(59, 130, 246, 0.45),
+      0 0 48px rgba(59, 130, 246, 0.2);
+    border-color: rgba(96, 165, 250, 0.75);
+  }
+
+  &--villain:hover {
+    transition: 1s ease-in-out;
+    color: rgba(163, 29, 29, 0.75);
+    // background: linear-gradient(135deg, rgba(163, 29, 29, 0.75), rgba(90, 16, 16, 0.75));
+    box-shadow:
+      0 0 24px rgba(185, 28, 28, 0.55),
+      0 0 48px rgba(127, 29, 29, 0.35);
+    border-color: rgba(220, 38, 38, 0.75);
+  }
+}
+
+.btn-vote {
+  background: #b5965a;
+  color: black;
+  border: 1px solid #f0c674;;
+  padding: $spacing-xs $spacing-md;
+  font-size: 0.8125rem;
+
+  &:hover:not(:disabled) {
+    background: #f0c674;;
+    border-color: #f0c674;;
+  }
+
+  &.voted {
+    animation: votePulse 0.6s ease;
+    background: rgba(212, 168, 67, 0.2);
+    border-color: $color-gold;
+    color: $color-gold-light;
+  }
+}
+
+.btn-outline {
+  background: transparent;
+  color: $color-white;
+  border: 1px solid $color-border;
+
+  &:hover {
+    border-color: $color-blue;
+    color: $color-blue-light;
+  }
+}

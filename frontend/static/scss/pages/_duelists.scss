@@ -1,0 +1,382 @@
+.duelist-section {
+  padding-bottom: $spacing-xl;
+}
+
+.duelist-inline-section {
+  padding-top: 0;
+  padding-bottom: $spacing-3xl;
+
+  .inline-rankings-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 72%;
+    gap: $spacing-sm;
+    align-items: stretch;
+  }
+}
+
+.page-duelists {
+  .section-header h1 {
+    font-family: $font-display;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    color: $color-white;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.duelist-inline-character {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: 0.8125rem;
+  min-width: 0;
+
+  a {
+    color: $color-muted;
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 7.5rem;
+
+    &:hover {
+      color: $color-gold-light;
+    }
+  }
+}
+
+.duelist-inline-item {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1.2fr) minmax(0, 1fr) auto auto auto;
+  align-items: center;
+  column-gap: $spacing-sm;
+  width: 100%;
+  min-height: 2.75rem;
+  box-sizing: border-box;
+
+  .inline-ranking-rank {
+    text-align: right;
+  }
+
+  .inline-ranking-name,
+  .duelist-inline-character {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .inline-ranking-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .inline-ranking-votes,
+  .btn-vote-inline {
+    justify-self: end;
+  }
+
+  &--hero {
+    border-left: 3px solid $color-blue;
+  }
+
+  &--villain {
+    border-left: 3px solid $color-villain;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    row-gap: 0.2rem;
+
+    .inline-ranking-rank {
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+
+    .duelist-inline-character,
+    .duelist-region,
+    .inline-ranking-votes {
+      grid-column: 2;
+    }
+
+    .btn-vote-inline {
+      grid-column: 3;
+      grid-row: 1 / span 2;
+      align-self: center;
+    }
+  }
+}
+
+.duelist-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-lg;
+  justify-content: center;
+  margin: 0 auto $spacing-xl;
+  max-width: 920px;
+}
+
+.duelist-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  align-items: center;
+}
+
+.duelist-filter-label {
+  font-family: $font-display;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-muted;
+}
+
+.duelist-filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  justify-content: center;
+}
+
+.duelist-filter-btn {
+  font-family: $font-display;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.45rem 0.9rem;
+  color: $color-muted;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  transition: color $transition-fast, border-color $transition-fast, background $transition-fast;
+
+  &:hover {
+    color: $color-white;
+    border-color: rgba(212, 168, 67, 0.4);
+  }
+
+  &.is-active {
+    color: $color-gold-light;
+    background: rgba(212, 168, 67, 0.12);
+    border-color: rgba(212, 168, 67, 0.45);
+  }
+}
+
+.duelist-panel {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.95), rgba(10, 14, 23, 0.98));
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  border-radius: $radius-xl;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  overflow: hidden;
+}
+
+.duelist-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(90deg, rgba(212, 168, 67, 0.14), rgba(59, 130, 246, 0.08));
+  border-bottom: 1px solid $color-border;
+}
+
+.duelist-panel-label {
+  font-family: $font-display;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-gold-light;
+}
+
+.duelist-panel-note {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $color-muted;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid $color-border;
+  border-radius: 999px;
+}
+
+.duelist-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(8, auto);
+  grid-auto-flow: column;
+  gap: $spacing-xs;
+  padding: $spacing-sm;
+  overflow: visible;
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-flow: row;
+  }
+}
+
+.duelist-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: 0.65rem 0.85rem;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  min-height: 3.25rem;
+  box-sizing: border-box;
+  transition: background $transition-fast, border-color $transition-fast, transform $transition-fast;
+  animation: fadeInUp 0.35s ease backwards;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(2px);
+  }
+
+  // &--hero {
+  //   border-left: 3px solid $color-blue;
+  // }
+
+  // &--villain {
+  //   border-left: 3px solid $color-villain;
+  // }
+
+  &--first {
+    background: linear-gradient(90deg, rgba(212, 168, 67, 0.14), rgba(255, 255, 255, 0.02));
+    border-color: rgba(212, 168, 67, 0.35);
+    overflow: visible;
+
+    .duelist-rank {
+      color: $color-gold;
+      font-size: 1.2rem;
+    }
+
+    .duelist-player,
+    .duelist-main {
+      overflow: visible;
+    }
+  }
+
+  &--second {
+    background: linear-gradient(90deg, rgba(192, 197, 206, 0.1), rgba(255, 255, 255, 0.02));
+    border-color: rgba(192, 197, 206, 0.25);
+  }
+
+  &--third {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.12), rgba(255, 255, 255, 0.02));
+    border-color: rgba(205, 127, 50, 0.28);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 2.5rem 1fr auto;
+    grid-template-areas:
+      "rank votes vote"
+      "main main main";
+
+    .duelist-rank {
+      grid-area: rank;
+    }
+
+    .duelist-main {
+      grid-area: main;
+    }
+
+    .duelist-votes {
+      grid-area: votes;
+      justify-self: end;
+    }
+
+    .btn-vote {
+      grid-area: vote;
+    }
+  }
+}
+
+.duelist-rank {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $color-gold-light;
+  text-align: center;
+}
+
+.duelist-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.duelist-player {
+  font-weight: 600;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.duelist-character {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: $spacing-xs;
+  min-width: 0;
+
+  a {
+    color: $color-muted;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+
+    &:hover {
+      color: $color-gold-light;
+    }
+  }
+}
+
+.duelist-region {
+  font-family: $font-display;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-gold-light;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid rgba(212, 168, 67, 0.35);
+  border-radius: $radius-sm;
+}
+
+.duelist-votes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
+  white-space: nowrap;
+
+  strong {
+    font-family: $font-display;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: $color-white;
+  }
+
+  span {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $color-muted;
+  }
+}

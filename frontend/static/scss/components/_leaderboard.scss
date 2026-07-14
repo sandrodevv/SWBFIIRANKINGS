@@ -1,0 +1,68 @@
+.leaderboard-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  transition: transform $transition-fast, border-color $transition-base, background $transition-base;
+  animation: fadeInUp 0.4s ease backwards;
+
+  &:hover {
+    border-color: rgba(59, 130, 246, 0.25);
+    background: rgba(17, 24, 39, 0.95);
+  }
+
+  &.rank-moving {
+    animation: rankShift 0.5s ease;
+  }
+}
+
+.leaderboard-rank {
+  font-family: $font-display;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: $color-muted;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.leaderboard-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.leaderboard-votes {
+  font-size: 0.875rem;
+  color: $color-muted;
+  white-space: nowrap;
+
+  strong {
+    color: $color-white;
+  }
+}
+
+@media (max-width: $breakpoint-md) {
+  .leaderboard-row {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+
+    .leaderboard-votes {
+      grid-column: 2;
+    }
+
+    .btn-vote {
+      grid-column: 1 / -1;
+      justify-self: stretch;
+    }
+  }
+}

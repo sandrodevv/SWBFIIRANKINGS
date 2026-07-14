@@ -1,0 +1,445 @@
+.logo-lightsaber {
+  --saber-mid: #f87171;
+  --saber-core: #ef4444;
+  --saber-deep: #b91c1c;
+  --saber-soft: #fca5a5;
+  --saber-tint: #fecaca;
+  --saber-rgb: 239, 68, 68;
+  --saber-rgb-deep: 185, 28, 28;
+  --saber-rotate: 90deg;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 2rem;
+  flex-shrink: 0;
+  overflow: visible;
+  pointer-events: none;
+  filter: drop-shadow(0 0 6px rgba(var(--saber-rgb), 0.55))
+    drop-shadow(0 0 14px rgba(var(--saber-rgb), 0.35));
+}
+
+.logo-lightsaber--blue {
+  --saber-mid: #60a5fa;
+  --saber-core: #3b82f6;
+  --saber-deep: #2563eb;
+  --saber-soft: #93c5fd;
+  --saber-tint: #bfdbfe;
+  --saber-rgb: 59, 130, 246;
+  --saber-rgb-deep: 37, 99, 235;
+
+  .logo-lightsaber__sparks {
+    display: none;
+  }
+}
+
+.logo-lightsaber--left {
+  --saber-rotate: -90deg;
+}
+
+.logo-lightsaber__stage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  height: 690px;
+  transform: translate(-50%, -50%) rotate(var(--saber-rotate)) scale(0.09);
+  transform-origin: center center;
+  line-height: 0;
+  text-align: center;
+}
+
+.logo-lightsaber span {
+  display: inline-block;
+}
+
+.logo-lightsaber__blade {
+  position: relative;
+  width: 14px;
+  height: 520px;
+  background: #fff;
+  border-radius: 7px 7px 2px 2px;
+  box-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff,
+    0 0 16px #fff,
+    0 0 22px var(--saber-mid),
+    0 0 36px var(--saber-core),
+    0 0 55px var(--saber-deep),
+    0 0 80px rgba(var(--saber-rgb-deep), 0.7);
+  z-index: 5;
+  overflow: visible;
+  animation: logo-saber-pulse 2.4s ease-in-out infinite;
+}
+
+.logo-lightsaber__sparks {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  z-index: 6;
+
+  > span {
+    position: absolute;
+    left: 50%;
+    width: 3px;
+    height: 10px;
+    margin-left: -1.5px;
+    border-radius: 1px;
+    background: #fff;
+    box-shadow:
+      0 0 4px #fff,
+      0 0 8px var(--saber-soft),
+      0 0 14px var(--saber-core);
+    opacity: 0;
+    transform-origin: center bottom;
+    animation: logo-saber-spark 0.55s ease-out infinite;
+  }
+
+  @for $i from 1 through 20 {
+    > span:nth-child(#{$i}) {
+      top: #{4% + ($i - 1) * 4.5%};
+      animation-delay: #{($i * 0.11) + (($i % 3) * 0.07)}s;
+      animation-duration: #{0.4 + ($i % 4) * 0.12}s;
+    }
+  }
+
+  > span:nth-child(3n) {
+    width: 2px;
+    height: 14px;
+  }
+
+  > span:nth-child(4n) {
+    width: 4px;
+    height: 7px;
+  }
+
+  > span:nth-child(5n) {
+    background: var(--saber-tint);
+  }
+}
+
+.logo-lightsaber__generator {
+  position: relative;
+  top: -3px;
+  width: 45px;
+  height: 170px;
+  z-index: 0;
+}
+
+.logo-lightsaber__guard {
+  width: 100%;
+}
+
+.logo-lightsaber__guard > span,
+.logo-lightsaber__handlestart > span,
+.logo-lightsaber__handle > span:nth-child(2n + 1),
+.logo-lightsaber__handle .logo-lightsaber__long + .logo-lightsaber__long {
+  width: 100%;
+  height: 3px;
+  background-color: #fff;
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.7) 10%,
+    rgba(0, 0, 0, 0.05) 25%,
+    rgba(0, 0, 0, 0.85) 35%,
+    rgba(0, 0, 0, 0.9) 50%,
+    rgba(0, 0, 0, 0.2) 55%,
+    rgba(0, 0, 0, 0.55) 62%,
+    rgba(0, 0, 0, 0.25) 70%,
+    rgba(0, 0, 0, 0.75) 85%,
+    rgba(0, 0, 0, 0.65) 100%
+  );
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.4) inset,
+    0 -1px 1px rgba(255, 255, 255, 0.4) inset;
+  border-radius: 0 0 2px 2px;
+}
+
+.logo-lightsaber__guard > span + span {
+  width: 82%;
+  height: 6px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4) inset,
+    0 -1px 2px rgba(255, 255, 255, 0.4) inset;
+}
+
+.logo-lightsaber__guard > span + span + span {
+  width: 76%;
+  height: 9px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.4) inset,
+    0 -1px 2px rgba(255, 255, 255, 0.4) inset;
+}
+
+.logo-lightsaber__guard > span + span + span + span {
+  width: 65%;
+  height: 6px;
+}
+
+.logo-lightsaber__guard > span + span + span + span + span {
+  width: 40%;
+  height: 10px;
+  box-shadow:
+    0 1px 5px rgba(0, 0, 0, 0.4) inset,
+    0 -1px 2px rgba(0, 0, 0, 0.4) inset;
+}
+
+.logo-lightsaber__handlestart {
+  width: 100%;
+}
+
+.logo-lightsaber__handlestart > span {
+  width: 90%;
+  height: 6px;
+  border-radius: 50% 50% 0 0;
+}
+
+.logo-lightsaber__handlestart > span + span {
+  width: 75%;
+  height: 4px;
+}
+
+.logo-lightsaber__handle {
+  width: 77%;
+}
+
+.logo-lightsaber__handle > span:nth-child(2n + 1) {
+  width: 95%;
+}
+
+.logo-lightsaber__handle > span:first-child {
+  width: 50%;
+  height: 7px;
+  background: linear-gradient(to right, #000, #333 58%, #000 85%, #000);
+  box-shadow: none;
+}
+
+.logo-lightsaber__handle > span:first-child + span,
+.logo-lightsaber__handle > span:nth-child(2n + 2) {
+  width: 75%;
+  height: 6px;
+  background: linear-gradient(to right, #000, #333 58%, #000 85%, #000);
+  border-radius: 3px 3px 0 0;
+}
+
+.logo-lightsaber__handle > span:nth-child(2n + 2) {
+  width: 100%;
+  height: 4px;
+  border-radius: 0;
+}
+
+.logo-lightsaber__long,
+.logo-lightsaber__handle .logo-lightsaber__long + .logo-lightsaber__long {
+  height: 35px;
+  border-radius: 0;
+  box-shadow:
+    0 -1px 2px rgba(0, 0, 0, 0.5) inset,
+    0 -1px 5px rgba(0, 0, 0, 0.5) inset;
+}
+
+.logo-lightsaber__handle .logo-lightsaber__long + .logo-lightsaber__long {
+  height: 30px;
+  width: 100%;
+  background-position: 2px 0;
+}
+
+.logo-lightsaber__box {
+  position: absolute;
+  top: 121px;
+  left: 50%;
+  height: 28px;
+  width: 24px;
+  margin-left: -12px;
+  background: linear-gradient(
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15,
+    #4b3222,
+    #2c1e15
+  );
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.9) inset,
+    0 3px 3px -3px rgba(0, 0, 0, 1);
+  z-index: 5;
+}
+
+.logo-lightsaber__glow {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: -12px;
+  right: 12px;
+  background: rgba(var(--saber-rgb), 0.12);
+  box-shadow:
+    0 0 18px rgba(var(--saber-rgb), 0.45),
+    0 0 40px rgba(var(--saber-rgb-deep), 0.3);
+}
+
+.logo-lightsaber__wings {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 30px;
+}
+
+.logo-lightsaber__wing {
+  position: absolute;
+  background: #4b3222;
+  width: 12px;
+  height: 16px;
+  bottom: 100%;
+  box-shadow:
+    0 0 14px rgba(0, 0, 0, 0.3) inset,
+    0 0 6px rgba(0, 0, 0, 0.3) inset;
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: -15px;
+    left: 0;
+    height: 10px;
+    width: 0;
+    border-left: 12px #312116 solid;
+    border-right: 5px transparent solid;
+    border-top: 5px transparent solid;
+  }
+}
+
+.logo-lightsaber__wing--1 {
+  right: -6px;
+}
+
+.logo-lightsaber__wing--2 {
+  right: 50%;
+  margin-right: -2px;
+  width: 4px;
+
+  &::before {
+    height: 14px;
+    width: 4px;
+    top: -14px;
+    background: #312116;
+    border: 0 none;
+  }
+}
+
+.logo-lightsaber__wing--3 {
+  left: -6px;
+
+  &::before {
+    border-right: 12px #312116 solid;
+    border-left: 0 none;
+  }
+}
+
+@keyframes logo-saber-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 16px #fff,
+      0 0 22px var(--saber-mid),
+      0 0 36px var(--saber-core),
+      0 0 55px var(--saber-deep),
+      0 0 80px rgba(var(--saber-rgb-deep), 0.7);
+  }
+
+  50% {
+    box-shadow:
+      0 0 6px #fff,
+      0 0 14px #fff,
+      0 0 22px #fff,
+      0 0 30px var(--saber-soft),
+      0 0 48px var(--saber-core),
+      0 0 72px var(--saber-deep),
+      0 0 100px rgba(var(--saber-rgb-deep), 0.9);
+  }
+}
+
+@keyframes logo-saber-spark {
+  0% {
+    opacity: 0;
+    transform: translateX(var(--spark-x, -10px)) scaleY(0.3) rotate(var(--spark-r, -28deg));
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  45% {
+    opacity: 0.95;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(calc(var(--spark-x, -10px) * 1.8)) translateY(-8px) scaleY(1.2)
+      rotate(var(--spark-r, -28deg));
+  }
+}
+
+.logo-lightsaber__sparks > span:nth-child(odd) {
+  --spark-x: -11px;
+  --spark-r: -32deg;
+}
+
+.logo-lightsaber__sparks > span:nth-child(even) {
+  --spark-x: 11px;
+  --spark-r: 32deg;
+}
+
+.logo-lightsaber__sparks > span:nth-child(3n + 1) {
+  --spark-x: -16px;
+  --spark-r: -48deg;
+}
+
+.logo-lightsaber__sparks > span:nth-child(3n + 2) {
+  --spark-x: 16px;
+  --spark-r: 48deg;
+}
+
+@media (max-width: $breakpoint-md) {
+  .logo-lightsaber {
+    width: 3.25rem;
+    height: 1.75rem;
+  }
+
+  .logo-lightsaber__stage {
+    transform: translate(-50%, -50%) rotate(var(--saber-rotate)) scale(0.07);
+  }
+}
+
+@media (max-width: 634px) {
+  .logo-lightsaber {
+    display: none;
+  }
+}
+
+@media (max-width: 500px) {
+  .logo-text {
+    display: none;
+  }
+}

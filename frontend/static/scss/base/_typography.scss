@@ -1,0 +1,27 @@
+h1, h2, h3, h4 {
+  font-family: $font-display;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+h3 { font-size: clamp(1.125rem, 2vw, 1.5rem); }
+
+p {
+  color: $color-muted;
+}
+
+.section-header {
+  margin-bottom: $spacing-xl;
+  text-align: center;
+
+  h2 {
+    color: $color-white;
+    margin-bottom: $spacing-xs;
+  }
+  .pRed {
+    color: rgb(92, 2, 2);
+  }
+}

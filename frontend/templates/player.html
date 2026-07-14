@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Player Profile{% endblock %}
+{% block body_class %}page-player{% endblock %}
+
+{% block content %}
+<section id="player-header" class="player-header section">
+    <div class="container" data-container="player-header"></div>
+</section>
+
+<section id="player-assignments" class="player-assignments section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Character Rankings</h2>
+            <p>Stats for Hero &amp; Villain characters this player represents</p>
+        </div>
+        <div class="player-assignment-grid" data-container="player-assignments"></div>
+    </div>
+</section>
+
+<section id="player-duelist" class="player-duelist section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Duelist Ranking</h2>
+            <p>Separate duelist ranking for this player</p>
+        </div>
+        <div class="player-duelist-grid" data-container="player-duelist"></div>
+    </div>
+</section>
+{% endblock %}

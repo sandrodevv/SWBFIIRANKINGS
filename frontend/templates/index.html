@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="home-main">
+    <div class="home-body">
+        <section id="hero-section" class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Star Wars Battlefront II Player Rankings</h1>
+                <p class="hero-subtitle">Vote for the best players of every Hero and Villain.</p>
+            </div>
+        </section>
+
+        <section id="featured-champions" class="featured-champions section">
+            <div class="section-header">
+                <h2>Featured Hero & Villain characters</h2>
+                <p>Current overall #1 ranked player for every character.</p>
+            </div>
+
+            <aside class="recent-votes-panel" aria-label="Recent votes">
+                <div class="recent-votes-panel-inner">
+                    <div class="recent-votes-list" data-container="recent-votes"></div>
+                </div>
+            </aside>
+
+            <div class="champions-grid" data-container="champions"></div>
+        </section>
+    </div>
+</div>
+{% endblock %}

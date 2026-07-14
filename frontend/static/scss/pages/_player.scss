@@ -1,0 +1,199 @@
+.player-header {
+  padding-top: $spacing-2xl;
+}
+
+.player-header-inner {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  animation: fadeInUp 0.5s ease;
+
+  @media (min-width: $breakpoint-md) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.player-header-identity {
+  .player-name {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35em;
+  }
+
+  .player-name__nickname {
+    font-family: $font-display;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+  }
+}
+
+.player-socials {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: $spacing-sm;
+}
+
+.player-social-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  color: $color-muted;
+  text-decoration: none;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+  i {
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  &:hover {
+    color: $color-white;
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  &--discord:hover {
+    color: #7289da;
+    border-color: rgba(114, 137, 218, 0.55);
+  }
+
+  &--steam:hover {
+    color: #66c0f4;
+    border-color: rgba(102, 192, 244, 0.55);
+  }
+
+  &--twitch:hover {
+    color: #9146ff;
+    border-color: rgba(145, 70, 255, 0.55);
+  }
+}
+
+.player-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-lg;
+}
+
+.player-assignments {
+  padding-top: 0;
+  padding-bottom: $spacing-xl;
+}
+
+.player-duelist {
+  padding-top: 0;
+  padding-bottom: $spacing-3xl;
+}
+
+.player-assignment-grid,
+.player-duelist-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.player-duelist-grid {
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+    max-width: 36rem;
+  }
+}
+
+.player-assignment-card {
+  padding: $spacing-xl;
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  animation: fadeInUp 0.5s ease;
+
+  &--hero {
+    border-color: rgba($color-blue, 0.35);
+  }
+
+  &--villain {
+    border-color: rgba(#ef4444, 0.35);
+  }
+
+  &--duelist {
+    border-color: rgba($color-gold, 0.4);
+  }
+
+  &--empty {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    opacity: 0.75;
+  }
+}
+
+.player-assignment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+}
+
+.player-duelist-meta {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.player-assignment-label {
+  font-family: $font-display;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: $color-muted;
+}
+
+.player-assignment-title {
+  margin-bottom: $spacing-lg;
+
+  a {
+    color: $color-white;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-gold-light;
+    }
+  }
+}
+
+.player-assignment-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.player-duelist-footer {
+  margin-top: $spacing-lg;
+}
+
+.player-duelist-link {
+  font-family: $font-display;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-gold-light;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-gold;
+  }
+}

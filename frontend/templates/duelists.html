@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Best Duelist Rankings{% endblock %}
+{% block body_class %}page-duelists{% endblock %}
+
+{% block content %}
+<section id="duelist-leaderboard" class="duelist-section section">
+    <div class="container">
+        <div class="section-header">
+            <h1>Duelist Rankings</h1>
+            <p>Separate player leaderboard — one Hero or Villain per duelist, ranked by region.</p>
+        </div>
+
+        <div class="duelist-filters" data-container="duelist-filters">
+            <div class="duelist-filter-group" role="group" aria-label="Region">
+                <span class="duelist-filter-label">Region</span>
+                <div class="duelist-filter-buttons">
+                    <button type="button" class="duelist-filter-btn is-active" data-region="overall">Overall</button>
+                    <button type="button" class="duelist-filter-btn" data-region="eu">EU</button>
+                    <button type="button" class="duelist-filter-btn" data-region="us">US</button>
+                    <button type="button" class="duelist-filter-btn" data-region="au">AU</button>
+                </div>
+            </div>
+            <div class="duelist-filter-group" role="group" aria-label="Vote period">
+                <span class="duelist-filter-label">Votes</span>
+                <div class="duelist-filter-buttons">
+                    <button type="button" class="duelist-filter-btn is-active" data-period="weekly">Weekly</button>
+                    <button type="button" class="duelist-filter-btn" data-period="all_time">All-time</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="duelist-panel">
+            <div class="duelist-panel-header">
+                <span class="duelist-panel-label" data-container="duelist-panel-label">Display · Weekly</span>
+                <span class="duelist-panel-note" data-container="duelist-vote-note">One vote per region per week</span>
+            </div>
+            <div class="duelist-list" data-container="duelists"></div>
+        </div>
+    </div>
+</section>
+
+<section id="duelist-inline-rankings" class="duelist-inline-section section" hidden>
+    <div class="container">
+        <div class="section-header">
+            <h2>Other Duelists</h2>
+            <p>Everyone outside the top 16</p>
+        </div>
+        <div class="inline-rankings-list" data-container="duelist-inline"></div>
+    </div>
+</section>
+{% endblock %}

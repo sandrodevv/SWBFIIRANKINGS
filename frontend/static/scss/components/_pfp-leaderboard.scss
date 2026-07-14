@@ -1,0 +1,222 @@
+.pfp-section {
+  padding-bottom: $spacing-3xl;
+}
+
+.pfp-panel {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.95), rgba(10, 14, 23, 0.98));
+  border: 1px solid rgba(212, 168, 67, 0.25);
+  border-radius: $radius-xl;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  overflow: hidden;
+}
+
+.pfp-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(90deg, rgba(212, 168, 67, 0.14), rgba(59, 130, 246, 0.08));
+  border-bottom: 1px solid $color-border;
+}
+
+.pfp-panel-label {
+  font-family: $font-display;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-gold-light;
+}
+
+.pfp-panel-note {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $color-muted;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid $color-border;
+  border-radius: 999px;
+}
+
+.pfp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 720px;
+  overflow-y: auto;
+  padding: $spacing-sm;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+  }
+}
+
+.pfp-row {
+  display: grid;
+  grid-template-columns: 3rem minmax(4.5rem, auto) 1fr auto;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  margin-bottom: $spacing-xs;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  border-radius: $radius-md;
+  transition: background $transition-fast, border-color $transition-fast, transform $transition-fast;
+  animation: fadeInUp 0.35s ease backwards;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.08);
+    transform: translateX(2px);
+  }
+
+  &--hero {
+    border-left: 3px solid $color-blue;
+  }
+
+  &--villain {
+    border-left: 3px solid $color-villain;
+  }
+
+  &--first {
+    background: linear-gradient(90deg, rgba(212, 168, 67, 0.14), rgba(255, 255, 255, 0.02));
+    border-color: rgba(212, 168, 67, 0.35);
+
+    .pfp-rank {
+      color: $color-gold;
+      font-size: 1.35rem;
+    }
+
+    .pfp-score-value {
+      color: $color-gold-light;
+      font-size: 1.25rem;
+    }
+  }
+
+  &--second {
+    background: linear-gradient(90deg, rgba(192, 197, 206, 0.1), rgba(255, 255, 255, 0.02));
+    border-color: rgba(192, 197, 206, 0.25);
+  }
+
+  &--third {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.12), rgba(255, 255, 255, 0.02));
+    border-color: rgba(205, 127, 50, 0.28);
+  }
+
+  @media (max-width: $breakpoint-md) {
+    grid-template-columns: 2.5rem 1fr;
+    grid-template-areas:
+      "rank score"
+      "main main"
+      "meta meta";
+
+    .pfp-rank {
+      grid-area: rank;
+    }
+
+    .pfp-score {
+      grid-area: score;
+      justify-self: end;
+    }
+
+    .pfp-main {
+      grid-area: main;
+    }
+
+    .pfp-meta {
+      grid-area: meta;
+    }
+  }
+}
+
+.pfp-rank {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $color-gold-light;
+  text-align: center;
+}
+
+.pfp-score {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+.pfp-score-value {
+  font-family: $font-display;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $color-white;
+}
+
+.pfp-score-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-muted;
+}
+
+.pfp-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.pfp-player {
+  font-weight: 600;
+}
+
+.pfp-character {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-sm;
+
+  a {
+    color: $color-muted;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-gold-light;
+    }
+  }
+}
+
+.pfp-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  color: $color-muted;
+  white-space: nowrap;
+
+  strong {
+    color: $color-white;
+  }
+
+  @media (max-width: $breakpoint-md) {
+    align-items: flex-start;
+    white-space: normal;
+  }
+}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Pound-for-Pound Rankings{% endblock %}
+{% block body_class %}page-pfp{% endblock %}
+
+{% block content %}
+<section id="pfp-leaderboard" class="pfp-section section">
+    <div class="container">
+        <div class="section-header">
+            <h1>Pound-for-Pound Rankings</h1>
+            <p>Top 15 players worldwide across all characters</p>
+            <p class="footer-developed">PFP is only calculated based on overall rankings, not duelist rankings.</p>
+        </div>
+        <div class="pfp-panel">
+            <div class="pfp-panel-header">
+                <span class="pfp-panel-label">Global PFP Leaderboard</span>
+                <span class="pfp-panel-note">Top 15</span>
+            </div>
+            <div class="pfp-list" data-container="pfp"></div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,56 @@
+.inline-rankings-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+.inline-ranking-item {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  transition: border-color $transition-base, background $transition-base;
+  animation: fadeInUp 0.35s ease backwards;
+
+  &:hover {
+    border-color: rgba(59, 130, 246, 0.25);
+    background: rgba(17, 24, 39, 0.95);
+  }
+}
+
+.inline-ranking-rank {
+  font-family: $font-display;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: $color-muted;
+}
+
+.inline-ranking-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+
+  .player-name__aka,
+  .player-name__username {
+    font-size: 0.78em;
+  }
+}
+
+.inline-ranking-votes {
+  font-size: 0.8125rem;
+  color: $color-muted;
+  white-space: nowrap;
+
+  strong {
+    color: $color-white;
+  }
+}
+
+.btn-vote-inline {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  min-height: auto;
+}

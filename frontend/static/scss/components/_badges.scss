@@ -1,0 +1,29 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-family: $font-display;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.badge-hero {
+  background: rgba(59, 130, 246, 0.15);
+  color: $color-blue-light;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-villain {
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.badge-champion {
+  background: rgba(212, 168, 67, 0.15);
+  color: $color-gold-light;
+  border: 1px solid rgba(212, 168, 67, 0.35);
+}
