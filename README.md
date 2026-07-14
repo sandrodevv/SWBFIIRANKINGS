@@ -190,7 +190,7 @@ python manage.py createsuperuser
 
 Admin panel: [http://127.0.0.1:8000/admin/](http://127.0.0.1:8000/admin/)
 
-## Production (Hetzner VPS)
+## Production (Railway)
 
 Production dependencies are already in `requirements.txt`:
 
@@ -198,39 +198,39 @@ Production dependencies are already in `requirements.txt`:
 - `gunicorn` — app server
 - `whitenoise` — static files
 
-Example files:
+Config files:
 
-- `Procfile` — gunicorn start command
-- `deploy/swbfii.service` — systemd unit
-- `deploy/nginx.swbfii.conf` — Nginx reverse proxy + `/static/` + `/media/`
+- `Procfile` — release (migrate + collectstatic) and web (gunicorn)
+- `railway.toml` — Railway start/release commands
 
-### On the server (summary)
+### Railway setup
+
+1. Create a new Railway project and deploy from this GitHub repo.
+2. Add a **PostgreSQL** plugin/service and link it to the web service (`DATABASE_URL` is injected automatically).
+3. Set these variables on the web service:
+
+```
+DEBUG=False
+SECRET_KEY=<generate-a-new-random-key>
+ALLOWED_HOSTS=.up.railway.app,your.custom.domain
+CSRF_TRUSTED_ORIGINS=https://your-app.up.railway.app,https://your.custom.domain
+```
+
+Keep your Discord webhook URLs here too if you use them.
+
+4. After the first successful deploy, open Railway **Shell** on the web service and run:
 
 ```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-
-# Create .env with at least:
-# DEBUG=False
-# SECRET_KEY=...
-# ALLOWED_HOSTS=your.domain
-# CSRF_TRUSTED_ORIGINS=https://your.domain
-# DATABASE_URL=postgresql://user:password@host:5432/dbname
-
-python manage.py migrate
 python manage.py seed_rankings --characters-only
 python manage.py createsuperuser
-python manage.py collectstatic --noinput
 ```
 
-Start with gunicorn (or enable the systemd unit):
+Migrations and `collectstatic` run automatically on each deploy via the release command.
 
-```bash
-gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 3 --timeout 60
-```
+Notes:
 
-Put Nginx in front (see `deploy/nginx.swbfii.conf`), then add HTTPS with certbot.
+- Character images in `frontend/static/images/characters/` ship with the repo (preferred on Railway).
+- Uploaded `media/` files on Railway’s disk are ephemeral unless you add a volume or object storage.
 
 ## Future Expansion
 

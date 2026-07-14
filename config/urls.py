@@ -32,5 +32,5 @@ urlpatterns = [
     ),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve uploaded media in all environments (needed on Railway without object storage).
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
