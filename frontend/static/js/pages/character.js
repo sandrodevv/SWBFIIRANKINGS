@@ -165,9 +165,11 @@ async function loadRankings() {
       if (main) setVoteButtonsEnabled(main, false);
     }
   } catch (error) {
-    showError(podiumContainer, "Failed to load rankings.");
-    clearElement(leaderboardContainer);
-    if (inlineContainer) clearElement(inlineContainer);
+    renderPodium([], podiumContainer);
+    renderLeaderboard([], leaderboardContainer);
+    if (inlineContainer) {
+      renderInlineRankings([], inlineContainer);
+    }
     console.error(error);
   }
 }

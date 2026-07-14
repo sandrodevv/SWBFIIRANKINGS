@@ -1,8 +1,23 @@
+.leaderboard-panel {
+  width: 100%;
+  padding: $spacing-lg;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  background: rgba(17, 24, 39, 0.55);
+}
+
 .leaderboard-list {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: $spacing-sm;
+
+  .empty-state {
+    text-align: center;
+    color: $color-muted;
+    padding: $spacing-xl $spacing-md;
+    margin: 0;
+  }
 }
 
 .leaderboard-row {

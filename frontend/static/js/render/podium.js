@@ -42,6 +42,13 @@ export function renderPodium(rankings, container) {
   container.replaceChildren();
 
   const topThree = rankings.filter((r) => r.rank <= 3);
+  if (!topThree.length) {
+    container.appendChild(
+      createElement("div", "empty-state", "No players ranked yet.")
+    );
+    return;
+  }
+
   const order = [2, 1, 3];
   const sorted = order
     .map((rank) => topThree.find((r) => r.rank === rank))
