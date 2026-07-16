@@ -1,8 +1,11 @@
 [build]
 builder = "NIXPACKS"
+# Never migrate during build — postgres.railway.internal is unavailable then.
+buildCommand = ""
 
 [deploy]
 startCommand = "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 60"
-releaseCommand = "python manage.py migrate && python manage.py collectstatic --noinput"
+# Runs after build, on the private network (has DB access).
+preDeployCommand = ["python manage.py migrate && python manage.py collectstatic --noinput"]
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
