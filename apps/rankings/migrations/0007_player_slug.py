@@ -25,10 +25,13 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # db_index=False avoids Django creating the varchar_pattern_ops
+        # "_like" index here and again when AlterField makes slug unique
+        # (DuplicateTable on PostgreSQL).
         migrations.AddField(
             model_name="player",
             name="slug",
-            field=models.SlugField(blank=True, max_length=60, null=True),
+            field=models.SlugField(blank=True, max_length=60, null=True, db_index=False),
         ),
         migrations.RunPython(backfill_player_slugs, migrations.RunPython.noop),
         migrations.AlterField(
