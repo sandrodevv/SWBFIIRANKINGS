@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.urls import include, path
 from django.views.generic import TemplateView
 
+from config.seo import favicon_ico
 from config.sitemaps import sitemap_xml
 
 
@@ -24,6 +25,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
+    path("favicon.ico", favicon_ico, name="favicon"),
     path("sitemap.xml", sitemap_xml, name="sitemap"),
     path("robots.txt", robots_txt, name="robots-txt"),
     path("", TemplateView.as_view(template_name="index.html"), name="home"),
