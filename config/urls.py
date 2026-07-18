@@ -10,12 +10,13 @@ from config.sitemaps import sitemap_xml
 
 
 def robots_txt(request):
+    # Allow /api/ so Google can render JS pages that load rankings data.
+    # API responses send X-Robots-Tag: noindex so JSON is not listed in Search.
     lines = [
         "User-agent: *",
         "Allow: /",
         "Disallow: /admin/",
         "Disallow: /dashboard/",
-        "Disallow: /api/",
         f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
     ]
     return HttpResponse("\n".join(lines) + "\n", content_type="text/plain")
