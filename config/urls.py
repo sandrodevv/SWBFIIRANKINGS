@@ -1,12 +1,11 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.sitemaps.views import sitemap
 from django.http import HttpResponse
 from django.urls import include, path
 from django.views.generic import TemplateView
 
-from config.sitemaps import sitemaps
+from config.sitemaps import sitemap_xml
 
 
 def robots_txt(request):
@@ -25,12 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
-    path(
-        "sitemap.xml",
-        sitemap,
-        {"sitemaps": sitemaps},
-        name="django.contrib.sitemaps.views.sitemap",
-    ),
+    path("sitemap.xml", sitemap_xml, name="sitemap"),
     path("robots.txt", robots_txt, name="robots-txt"),
     path("", TemplateView.as_view(template_name="index.html"), name="home"),
     path("pfp/", TemplateView.as_view(template_name="pfp.html"), name="pfp"),
