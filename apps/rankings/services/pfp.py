@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from django.db import connection, transaction
 from django.db.models import Count, Max
 
 from apps.characters.models import Character
@@ -126,6 +127,25 @@ def get_pfp_leaderboard_entries(limit: int | None = None) -> list[dict]:
     if limit is not None:
         queryset = queryset[: max(0, int(limit))]
     return [serialize_pfp_ranking(ranking) for ranking in queryset]
+
+
+def schedule_pfp_recalculation() -> None:
+    """
+    Recalculate PFP once after the current DB transaction commits.
+
+    Debounced per connection so admin inlines that save multiple rankings
+    only trigger one recalculation.
+    """
+    if getattr(connection, "_pfp_recalc_scheduled", False):
+        return
+
+    connection._pfp_recalc_scheduled = True
+
+    def _run():
+        connection._pfp_recalc_scheduled = False
+        recalculate_all_pfp_scores()
+
+    transaction.on_commit(_run)
 
 
 def recalculate_all_pfp_scores():

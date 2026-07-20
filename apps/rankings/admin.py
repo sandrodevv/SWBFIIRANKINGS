@@ -13,6 +13,7 @@ from apps.rankings.models import (
     VoteRecord,
     WeeklyVotePeriod,
 )
+from apps.rankings.services.pfp import schedule_pfp_recalculation
 from apps.rankings.validators import (
     player_side_assignment_conflict,
     validate_player_side_assignment,
@@ -38,13 +39,19 @@ class CharacterRankingForm(forms.ModelForm):
 
     def save(self, commit=True):
         """Keep all_time_votes in sync when weekly votes are edited in admin."""
+        previous_pk = self.instance.pk
+        previous_votes = self.initial.get("votes")
+        votes_changed = "votes" in self.changed_data
         instance = super().save(commit=False)
-        if self.instance.pk and "votes" in self.changed_data:
-            previous = self.initial.get("votes")
-            if previous is None:
-                previous = 0
-            delta = int(instance.votes) - int(previous)
-            instance.all_time_votes = max(0, int(instance.all_time_votes) + delta)
+        if votes_changed:
+            if previous_pk:
+                if previous_votes is None:
+                    previous_votes = 0
+                delta = int(instance.votes) - int(previous_votes)
+                instance.all_time_votes = max(0, int(instance.all_time_votes) + delta)
+            elif int(instance.votes) > int(instance.all_time_votes or 0):
+                # New assignment: weekly votes should count toward career total.
+                instance.all_time_votes = int(instance.votes)
         if commit:
             instance.save()
             self.save_m2m()
@@ -169,6 +176,11 @@ class PlayerAdmin(admin.ModelAdmin):
     )
     inlines = (CharacterRankingInline, DuelistInline)
 
+    def save_formset(self, request, form, formset, change):
+        super().save_formset(request, form, formset, change)
+        if formset.model is CharacterRanking:
+            schedule_pfp_recalculation()
+
     @admin.display(description="Assignments")
     def assignment_summary(self, obj):
         if not obj.pk:
@@ -196,6 +208,18 @@ class CharacterRankingAdmin(admin.ModelAdmin):
     search_fields = ("player__nickname", "character__name")
     autocomplete_fields = ("player", "character")
     ordering = ("character", "-votes", "created_at")
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        schedule_pfp_recalculation()
+
+    def delete_model(self, request, obj):
+        super().delete_model(request, obj)
+        schedule_pfp_recalculation()
+
+    def delete_queryset(self, request, queryset):
+        super().delete_queryset(request, queryset)
+        schedule_pfp_recalculation()
 
 
 @admin.register(Duelist)
