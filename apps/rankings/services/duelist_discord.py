@@ -1,4 +1,4 @@
-"""Discord notifications for regional duelist weekly winners on period reset."""
+"""Discord notifications for duelist weekly winners and overall all-time snapshots."""
 
 from __future__ import annotations
 
@@ -407,13 +407,30 @@ def build_overall_alltime_duelist_embed(
     }
 
 
-def send_overall_alltime_duelist_notification() -> str:
+def send_overall_alltime_duelist_notification(
+    *,
+    period_started_at: datetime | None = None,
+    force: bool = False,
+) -> str:
     """
     Send the overall all-time duelist leaderboard to Discord.
 
-    Manual snapshot (not period-gated). Never raises.
+    Idempotent per voting period when period_started_at is provided (or inferred).
+    Never raises.
     """
     try:
+        from apps.rankings.services.weekly_reset import get_current_period
+
+        period_started_at = period_started_at or get_current_period().started_at
+        claim = _claim_notification_slot(
+            period_started_at,
+            notification_type=DiscordNotificationLog.TYPE_OVERALL_ALLTIME_DUELIST,
+            region_label="Overall all-time",
+            force=force,
+        )
+        if claim is None:
+            return "skipped_duplicate"
+
         duelists = get_overall_alltime_duelist_top()
         embed = build_overall_alltime_duelist_embed(duelists)
         ok = send_discord_embeds(
@@ -421,11 +438,31 @@ def send_overall_alltime_duelist_notification() -> str:
             setting_name="DISCORD_OVERALL_ALLTIME_DUELIST_WEBHOOK_URL",
         )
         if ok:
+            claim.status = DiscordNotificationLog.STATUS_SENT
+            claim.entry_count = len(duelists)
+            claim.detail = "Delivered"
+            claim.sent_at = timezone.now()
+            claim.save(
+                update_fields=[
+                    "status",
+                    "entry_count",
+                    "detail",
+                    "sent_at",
+                    "updated_at",
+                ]
+            )
             logger.info(
                 "Overall all-time duelist Discord notification sent (%s entries).",
                 len(duelists),
             )
             return "sent"
+
+        claim.status = DiscordNotificationLog.STATUS_FAILED
+        claim.entry_count = len(duelists)
+        claim.detail = "Webhook delivery failed"
+        claim.save(
+            update_fields=["status", "entry_count", "detail", "updated_at"]
+        )
         logger.error("Overall all-time duelist Discord notification failed.")
         return "failed"
     except Exception:

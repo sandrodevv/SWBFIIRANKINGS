@@ -92,21 +92,30 @@ def snapshot_and_reset_weekly_votes() -> None:
 
 
 def _schedule_duelist_winners_notifications(period_started_at: datetime) -> None:
-    """Send previous-week regional top duelists after the reset transaction commits."""
+    """Send previous-week regional tops + overall all-time after reset commits."""
 
     def _send() -> None:
         try:
             from apps.rankings.services.duelist_discord import (
                 send_all_regional_duelist_weekly_winners,
+                send_overall_alltime_duelist_notification,
             )
 
             results = send_all_regional_duelist_weekly_winners(
                 period_started_at=period_started_at,
             )
             logger.info("Regional duelist weekly winners notification results=%s", results)
+
+            overall_result = send_overall_alltime_duelist_notification(
+                period_started_at=period_started_at,
+            )
+            logger.info(
+                "Overall all-time duelist notification result=%s",
+                overall_result,
+            )
         except Exception:
             logger.exception(
-                "Failed to queue/send regional duelist weekly winners notifications."
+                "Failed to queue/send duelist Discord notifications after weekly reset."
             )
 
     transaction.on_commit(_send)
