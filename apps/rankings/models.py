@@ -27,6 +27,11 @@ class Player(models.Model):
         blank=True,
         help_text="Public Twitch channel link for this player.",
     )
+    youtube_url = models.URLField(
+        max_length=200,
+        blank=True,
+        help_text="Public YouTube channel or video link for this player.",
+    )
     all_time_votes = models.PositiveIntegerField(
         default=0,
         help_text="Total votes received across all characters and weekly periods.",

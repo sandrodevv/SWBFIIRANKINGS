@@ -163,7 +163,7 @@ async function loadPlayerProfile() {
       )
     );
 
-    if (player.discord_url || player.steam_url || player.twitch_url) {
+    if (player.discord_url || player.steam_url || player.twitch_url || player.youtube_url) {
       const socials = createElement("div", "player-socials");
       if (player.discord_url) {
         const discord = createElement("a", "player-social-link player-social-link--discord");
@@ -194,6 +194,16 @@ async function loadPlayerProfile() {
         twitch.setAttribute("aria-label", `${player.nickname} on Twitch`);
         twitch.innerHTML = '<i class="fa-brands fa-twitch" aria-hidden="true"></i>';
         socials.appendChild(twitch);
+      }
+      if (player.youtube_url) {
+        const youtube = createElement("a", "player-social-link player-social-link--youtube");
+        youtube.href = player.youtube_url;
+        youtube.target = "_blank";
+        youtube.rel = "noopener noreferrer";
+        youtube.title = "YouTube";
+        youtube.setAttribute("aria-label", `${player.nickname} on YouTube`);
+        youtube.innerHTML = '<i class="fa-brands fa-youtube" aria-hidden="true"></i>';
+        socials.appendChild(youtube);
       }
       identity.appendChild(socials);
     }

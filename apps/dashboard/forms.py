@@ -41,6 +41,11 @@ class AddPlayerWithAssignmentsForm(forms.Form):
         widget=forms.URLInput(attrs={"placeholder": "https://twitch.tv/..."}),
         label="Twitch URL (optional)",
     )
+    youtube_url = forms.URLField(
+        required=False,
+        widget=forms.URLInput(attrs={"placeholder": "https://youtube.com/@..."}),
+        label="YouTube URL (optional)",
+    )
     register_character_rankings = forms.BooleanField(
         required=False,
         initial=True,
@@ -97,6 +102,10 @@ class AddPlayerWithAssignmentsForm(forms.Form):
 
     def clean_twitch_url(self):
         value = (self.cleaned_data.get("twitch_url") or "").strip()
+        return value or ""
+
+    def clean_youtube_url(self):
+        value = (self.cleaned_data.get("youtube_url") or "").strip()
         return value or ""
 
     def clean(self):
@@ -429,6 +438,11 @@ class PlayerLinksForm(forms.Form):
         widget=forms.TextInput(attrs={"placeholder": "https://twitch.tv/..."}),
         label="Twitch URL",
     )
+    youtube_url = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"placeholder": "https://youtube.com/@..."}),
+        label="YouTube URL",
+    )
     clear_discord = forms.BooleanField(
         required=False,
         initial=False,
@@ -444,6 +458,11 @@ class PlayerLinksForm(forms.Form):
         initial=False,
         label="Remove Twitch link",
     )
+    clear_youtube = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Remove YouTube link",
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -454,6 +473,7 @@ class PlayerLinksForm(forms.Form):
                 "discord_url": player.discord_url or "",
                 "steam_url": player.steam_url or "",
                 "twitch_url": player.twitch_url or "",
+                "youtube_url": player.youtube_url or "",
             }
             for player in players
         }
@@ -479,6 +499,13 @@ class PlayerLinksForm(forms.Form):
         validator = forms.URLField().clean
         return validator(value)
 
+    def clean_youtube_url(self):
+        value = (self.cleaned_data.get("youtube_url") or "").strip()
+        if not value:
+            return ""
+        validator = forms.URLField().clean
+        return validator(value)
+
     def clean(self):
         cleaned_data = super().clean()
         if cleaned_data.get("clear_discord"):
@@ -487,4 +514,6 @@ class PlayerLinksForm(forms.Form):
             cleaned_data["steam_url"] = ""
         if cleaned_data.get("clear_twitch"):
             cleaned_data["twitch_url"] = ""
+        if cleaned_data.get("clear_youtube"):
+            cleaned_data["youtube_url"] = ""
         return cleaned_data

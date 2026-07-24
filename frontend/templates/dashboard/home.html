@@ -265,6 +265,11 @@
                     {{ form.twitch_url }}
                     {{ form.twitch_url.errors }}
                 </div>
+                <div class="form-field">
+                    <label for="{{ form.youtube_url.id_for_label }}">{{ form.youtube_url.label }}</label>
+                    {{ form.youtube_url }}
+                    {{ form.youtube_url.errors }}
+                </div>
 
                 <fieldset class="form-fieldset">
                     <label class="form-check">
@@ -498,6 +503,17 @@
                     <span>{{ links_form.clear_twitch.label }}</span>
                 </label>
                 {{ links_form.clear_twitch.errors }}
+
+                <div class="form-field">
+                    <label for="{{ links_form.youtube_url.id_for_label }}">{{ links_form.youtube_url.label }}</label>
+                    {{ links_form.youtube_url }}
+                    {{ links_form.youtube_url.errors }}
+                </div>
+                <label class="form-check">
+                    {{ links_form.clear_youtube }}
+                    <span>{{ links_form.clear_youtube.label }}</span>
+                </label>
+                {{ links_form.clear_youtube.errors }}
 
                 <button type="submit" class="btn btn-primary btn-block">Save profile links</button>
             </form>
@@ -828,24 +844,29 @@
   var linksDiscord = document.getElementById("id_links-discord_url");
   var linksSteam = document.getElementById("id_links-steam_url");
   var linksTwitch = document.getElementById("id_links-twitch_url");
+  var linksYoutube = document.getElementById("id_links-youtube_url");
   var linksClearDiscord = document.getElementById("id_links-clear_discord");
   var linksClearSteam = document.getElementById("id_links-clear_steam");
   var linksClearTwitch = document.getElementById("id_links-clear_twitch");
+  var linksClearYoutube = document.getElementById("id_links-clear_youtube");
   var linksHint = document.querySelector("[data-links-hint]");
 
   function syncLinksForm() {
-    if (!linksPlayerSelect || !linksDiscord || !linksSteam || !linksTwitch) return;
+    if (!linksPlayerSelect || !linksDiscord || !linksSteam || !linksTwitch || !linksYoutube) return;
     var selected = linksPlayerSelect.value;
     if (linksClearDiscord) linksClearDiscord.checked = false;
     if (linksClearSteam) linksClearSteam.checked = false;
     if (linksClearTwitch) linksClearTwitch.checked = false;
+    if (linksClearYoutube) linksClearYoutube.checked = false;
     if (!selected) {
       linksDiscord.value = "";
       linksSteam.value = "";
       linksTwitch.value = "";
+      linksYoutube.value = "";
       linksDiscord.disabled = false;
       linksSteam.disabled = false;
       linksTwitch.disabled = false;
+      linksYoutube.disabled = false;
       if (linksHint) linksHint.textContent = "Select a player to load current links.";
       return;
     }
@@ -853,14 +874,17 @@
     linksDiscord.value = info.discord_url || "";
     linksSteam.value = info.steam_url || "";
     linksTwitch.value = info.twitch_url || "";
+    linksYoutube.value = info.youtube_url || "";
     linksDiscord.disabled = false;
     linksSteam.disabled = false;
     linksTwitch.disabled = false;
+    linksYoutube.disabled = false;
     if (linksHint) {
       var parts = [];
       if (info.discord_url) parts.push("Discord set");
       if (info.steam_url) parts.push("Steam set");
       if (info.twitch_url) parts.push("Twitch set");
+      if (info.youtube_url) parts.push("YouTube set");
       linksHint.textContent = parts.length
         ? "Current: " + parts.join(", ") + ". Clear a field or check Remove to delete a link."
         : "No profile links set yet.";
@@ -880,6 +904,10 @@
       linksTwitch.disabled = linksClearTwitch.checked;
       if (linksClearTwitch.checked) linksTwitch.value = "";
     }
+    if (linksClearYoutube && linksYoutube) {
+      linksYoutube.disabled = linksClearYoutube.checked;
+      if (linksClearYoutube.checked) linksYoutube.value = "";
+    }
   }
 
   if (linksPlayerSelect) {
@@ -889,6 +917,7 @@
   if (linksClearDiscord) linksClearDiscord.addEventListener("change", syncClearToggles);
   if (linksClearSteam) linksClearSteam.addEventListener("change", syncClearToggles);
   if (linksClearTwitch) linksClearTwitch.addEventListener("change", syncClearToggles);
+  if (linksClearYoutube) linksClearYoutube.addEventListener("change", syncClearToggles);
 })();
 </script>
 {% endblock %}

@@ -161,6 +161,7 @@ def home_view(request):
                     discord_url=links_form.cleaned_data["discord_url"],
                     steam_url=links_form.cleaned_data["steam_url"],
                     twitch_url=links_form.cleaned_data["twitch_url"],
+                    youtube_url=links_form.cleaned_data["youtube_url"],
                 )
                 if changed:
                     removed = []
@@ -170,6 +171,8 @@ def home_view(request):
                         removed.append("Steam")
                     if links_form.cleaned_data.get("clear_twitch"):
                         removed.append("Twitch")
+                    if links_form.cleaned_data.get("clear_youtube"):
+                        removed.append("YouTube")
                     if removed:
                         messages.success(
                             request,
@@ -268,6 +271,7 @@ def home_view(request):
                         discord_url=add_form.cleaned_data.get("discord_url") or "",
                         steam_url=add_form.cleaned_data.get("steam_url") or "",
                         twitch_url=add_form.cleaned_data.get("twitch_url") or "",
+                        youtube_url=add_form.cleaned_data.get("youtube_url") or "",
                         register_character_rankings=add_form.cleaned_data[
                             "register_character_rankings"
                         ],

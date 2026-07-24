@@ -44,6 +44,7 @@ class PlayerProfileSerializer(serializers.Serializer):
     discord_url = serializers.URLField(allow_blank=True, required=False)
     steam_url = serializers.URLField(allow_blank=True, required=False)
     twitch_url = serializers.URLField(allow_blank=True, required=False)
+    youtube_url = serializers.URLField(allow_blank=True, required=False)
     name_burning = serializers.BooleanField()
     name_smoke = serializers.BooleanField()
     name_glitch = serializers.BooleanField()

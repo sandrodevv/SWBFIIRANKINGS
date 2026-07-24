@@ -170,6 +170,7 @@ class PlayerAdmin(admin.ModelAdmin):
         "discord_url",
         "steam_url",
         "twitch_url",
+        "youtube_url",
         "all_time_votes",
         "hero_gold_medals",
         "villain_gold_medals",

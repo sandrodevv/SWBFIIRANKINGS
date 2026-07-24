@@ -73,6 +73,11 @@
     color: #9146ff;
     border-color: rgba(145, 70, 255, 0.55);
   }
+
+  &--youtube:hover {
+    color: #ff0000;
+    border-color: rgba(255, 0, 0, 0.55);
+  }
 }
 
 .player-stats {

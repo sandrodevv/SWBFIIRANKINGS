@@ -264,6 +264,7 @@ class PlayerDetailAPIView(APIView):
             "discord_url": player.discord_url or "",
             "steam_url": player.steam_url or "",
             "twitch_url": player.twitch_url or "",
+            "youtube_url": player.youtube_url or "",
             "name_burning": player.name_burning,
             "name_smoke": player.name_smoke,
             "name_glitch": player.name_glitch,

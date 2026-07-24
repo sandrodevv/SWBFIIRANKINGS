@@ -90,6 +90,7 @@ def create_player_with_assignments(
     discord_url="",
     steam_url="",
     twitch_url="",
+    youtube_url="",
     register_character_rankings=True,
     hero_character=None,
     villain_character=None,
@@ -108,6 +109,7 @@ def create_player_with_assignments(
         discord_url=discord_url or "",
         steam_url=steam_url or "",
         twitch_url=twitch_url or "",
+        youtube_url=youtube_url or "",
     )
     player.full_clean()
     player.save()
@@ -251,19 +253,22 @@ def set_player_name_effects(player, name_burning, name_smoke, name_glitch):
     return player, True
 
 
-def set_player_links(player, discord_url="", steam_url="", twitch_url=""):
+def set_player_links(player, discord_url="", steam_url="", twitch_url="", youtube_url=""):
     discord = (discord_url or "").strip()
     steam = (steam_url or "").strip()
     twitch = (twitch_url or "").strip()
+    youtube = (youtube_url or "").strip()
     changed = (
         player.discord_url != discord
         or player.steam_url != steam
         or player.twitch_url != twitch
+        or player.youtube_url != youtube
     )
     if not changed:
         return player, False
     player.discord_url = discord
     player.steam_url = steam
     player.twitch_url = twitch
-    player.save(update_fields=["discord_url", "steam_url", "twitch_url"])
+    player.youtube_url = youtube
+    player.save(update_fields=["discord_url", "steam_url", "twitch_url", "youtube_url"])
     return player, True
