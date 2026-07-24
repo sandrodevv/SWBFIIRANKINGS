@@ -14,8 +14,9 @@ from django.db import transaction
 from django.db.models import F
 from django.utils import timezone
 
+from apps.characters.models import Character
 from apps.rankings.services.pfp import recalculate_all_pfp_scores
-from apps.rankings.models import CharacterRanking, Duelist, WeeklyVotePeriod
+from apps.rankings.models import CharacterRanking, Duelist, Player, WeeklyVotePeriod
 
 logger = logging.getLogger(__name__)
 
@@ -85,10 +86,56 @@ def period_has_expired(period=None) -> bool:
     return timezone.now() >= get_period_end(period)
 
 
+def award_weekly_gold_medals() -> None:
+    """
+    Award permanent Hero/Villain gold medals from the finalized weekly snapshot.
+
+    Call only after weekly votes have been copied into ``last_week_votes``.
+    Each character's #1 (by last_week_votes, then created_at) earns +1 on that
+    character's side. Counts are never decreased by vote resets.
+    """
+    hero_winner_ids: list[int] = []
+    villain_winner_ids: list[int] = []
+
+    for character in Character.objects.only("id", "side").iterator():
+        top = (
+            CharacterRanking.objects.filter(
+                character_id=character.id,
+                last_week_votes__gt=0,
+            )
+            .order_by("-last_week_votes", "created_at")
+            .values_list("player_id", flat=True)
+            .first()
+        )
+        if top is None:
+            continue
+        if character.side == Character.SIDE_HERO:
+            hero_winner_ids.append(top)
+        elif character.side == Character.SIDE_VILLAIN:
+            villain_winner_ids.append(top)
+
+    for player_id in hero_winner_ids:
+        Player.objects.filter(pk=player_id).update(
+            hero_gold_medals=F("hero_gold_medals") + 1
+        )
+    for player_id in villain_winner_ids:
+        Player.objects.filter(pk=player_id).update(
+            villain_gold_medals=F("villain_gold_medals") + 1
+        )
+
+    if hero_winner_ids or villain_winner_ids:
+        logger.info(
+            "Awarded weekly gold medals: hero=%s villain=%s",
+            len(hero_winner_ids),
+            len(villain_winner_ids),
+        )
+
+
 def snapshot_and_reset_weekly_votes() -> None:
     """Save current weekly votes as last_week_votes, then zero the current week."""
     CharacterRanking.objects.update(last_week_votes=F("votes"), votes=0)
     Duelist.objects.update(last_week_votes=F("votes"), votes=0)
+    award_weekly_gold_medals()
 
 
 def _schedule_duelist_winners_notifications(period_started_at: datetime) -> None:

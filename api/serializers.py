@@ -53,6 +53,8 @@ class PlayerProfileSerializer(serializers.Serializer):
     ranking_all_time_votes = serializers.IntegerField()
     duelist_weekly_votes = serializers.IntegerField()
     duelist_all_time_votes = serializers.IntegerField()
+    hero_gold_medals = serializers.IntegerField()
+    villain_gold_medals = serializers.IntegerField()
     hero_assignment = PlayerCharacterStatSerializer(allow_null=True)
     villain_assignment = PlayerCharacterStatSerializer(allow_null=True)
     duelist = PlayerDuelistStatSerializer(allow_null=True)

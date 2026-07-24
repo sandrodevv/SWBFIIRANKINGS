@@ -4,7 +4,32 @@ import { nameEffectsFrom, renderPlayerName } from "../render/player-name.js";
 import { getPlayerSlugFromPath, formatNumber } from "../utils/format.js";
 import { showError, showLoading, createElement, clearElement } from "../utils/dom.js";
 
-function renderAssignmentCard(assignment, label) {
+function createGoldMedalElement() {
+  const medal = createElement("div", "gold-medal");
+  medal.setAttribute("aria-hidden", "true");
+  medal.innerHTML = `
+    <div class="gold-medal__disc icon--star"></div>
+    <div class="gold-medal__twinkles">
+      <div class="icon--twinkle star-a"></div>
+      <div class="icon--twinkle delay-twinkle star-b"></div>
+      <div class="icon--twinkle star-c"></div>
+      <div class="icon--twinkle star-d"></div>
+      <div class="icon--twinkle delay-twinkle star-e"></div>
+    </div>
+  `;
+  return medal;
+}
+
+function createGoldMedalCounter(count) {
+  const wrap = createElement("div", "gold-medal-counter");
+  const safeCount = Number.isFinite(Number(count)) ? Math.max(0, Number(count)) : 0;
+  wrap.appendChild(createElement("span", "gold-medal-counter__count", `${safeCount}\u00d7`));
+  wrap.appendChild(createGoldMedalElement());
+  wrap.setAttribute("title", `${safeCount} gold medal${safeCount === 1 ? "" : "s"}`);
+  return wrap;
+}
+
+function renderAssignmentCard(assignment, label, goldMedals) {
   const card = createElement(
     "article",
     `player-assignment-card player-assignment-card--${assignment.side}`
@@ -12,6 +37,7 @@ function renderAssignmentCard(assignment, label) {
 
   const header = createElement("div", "player-assignment-header");
   header.appendChild(createElement("span", "player-assignment-label", label));
+  header.appendChild(createGoldMedalCounter(goldMedals));
   header.appendChild(createBadge(assignment.side));
   card.appendChild(header);
 
@@ -41,9 +67,12 @@ function renderAssignmentCard(assignment, label) {
   return card;
 }
 
-function renderEmptyAssignment(label) {
+function renderEmptyAssignment(label, goldMedals) {
   const card = createElement("article", "player-assignment-card player-assignment-card--empty");
-  card.appendChild(createElement("span", "player-assignment-label", label));
+  const header = createElement("div", "player-assignment-header");
+  header.appendChild(createElement("span", "player-assignment-label", label));
+  header.appendChild(createGoldMedalCounter(goldMedals));
+  card.appendChild(header);
   card.appendChild(createElement("p", "text-muted", "Player is not assigned to any character yet."));
   return card;
 }
@@ -187,13 +216,13 @@ async function loadPlayerProfile() {
     clearElement(assignmentsContainer);
     assignmentsContainer.appendChild(
       player.hero_assignment
-        ? renderAssignmentCard(player.hero_assignment, "Hero")
-        : renderEmptyAssignment("Hero")
+        ? renderAssignmentCard(player.hero_assignment, "Hero", player.hero_gold_medals)
+        : renderEmptyAssignment("Hero", player.hero_gold_medals)
     );
     assignmentsContainer.appendChild(
       player.villain_assignment
-        ? renderAssignmentCard(player.villain_assignment, "Villain")
-        : renderEmptyAssignment("Villain")
+        ? renderAssignmentCard(player.villain_assignment, "Villain", player.villain_gold_medals)
+        : renderEmptyAssignment("Villain", player.villain_gold_medals)
     );
 
     clearElement(duelistContainer);

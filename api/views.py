@@ -273,6 +273,8 @@ class PlayerDetailAPIView(APIView):
             "ranking_all_time_votes": ranking_all_time_votes,
             "duelist_weekly_votes": duelist_weekly_votes,
             "duelist_all_time_votes": duelist_all_time_votes,
+            "hero_gold_medals": player.hero_gold_medals,
+            "villain_gold_medals": player.villain_gold_medals,
             "hero_assignment": hero_assignment,
             "villain_assignment": villain_assignment,
             "duelist": duelist_stat,

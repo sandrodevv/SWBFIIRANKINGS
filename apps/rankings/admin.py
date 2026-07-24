@@ -150,6 +150,8 @@ class PlayerAdmin(admin.ModelAdmin):
         "slug",
         "username",
         "all_time_votes",
+        "hero_gold_medals",
+        "villain_gold_medals",
         "name_burning",
         "name_smoke",
         "name_glitch",
@@ -160,7 +162,7 @@ class PlayerAdmin(admin.ModelAdmin):
     list_filter = ("name_burning", "name_smoke", "name_glitch")
     search_fields = ("nickname", "username", "slug")
     prepopulated_fields = {"slug": ("nickname",)}
-    readonly_fields = ("all_time_votes", "created_at")
+    readonly_fields = ("all_time_votes", "hero_gold_medals", "villain_gold_medals", "created_at")
     fields = (
         "nickname",
         "slug",
@@ -169,6 +171,8 @@ class PlayerAdmin(admin.ModelAdmin):
         "steam_url",
         "twitch_url",
         "all_time_votes",
+        "hero_gold_medals",
+        "villain_gold_medals",
         "name_burning",
         "name_smoke",
         "name_glitch",

@@ -31,6 +31,20 @@ class Player(models.Model):
         default=0,
         help_text="Total votes received across all characters and weekly periods.",
     )
+    hero_gold_medals = models.PositiveIntegerField(
+        default=0,
+        help_text=(
+            "Permanent count of weekly #1 finishes on this player's Hero leaderboard. "
+            "Never decreased by weekly vote resets."
+        ),
+    )
+    villain_gold_medals = models.PositiveIntegerField(
+        default=0,
+        help_text=(
+            "Permanent count of weekly #1 finishes on this player's Villain leaderboard. "
+            "Never decreased by weekly vote resets."
+        ),
+    )
     name_burning = models.BooleanField(
         default=False,
         help_text="Show the burning nickname animation on this player everywhere.",
