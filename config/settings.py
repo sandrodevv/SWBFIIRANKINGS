@@ -76,6 +76,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.context_processors.analytics",
             ],
         },
     },
@@ -221,6 +222,16 @@ DISCORD_SCHEDULER_INTERVAL_SECONDS = int(
 LOGIN_URL = "/dashboard/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 LOGOUT_REDIRECT_URL = "/dashboard/login/"
+
+# Google Analytics 4 (public tracking + admin dashboard reports)
+# Measurement ID (G-XXXXXXXX) powers gtag on public pages.
+GA_MEASUREMENT_ID = (os.getenv("GA_MEASUREMENT_ID") or "G-M5N5XMXXRX").strip()
+# Numeric GA4 property ID for the Data API (Admin → Property settings).
+GA4_PROPERTY_ID = (os.getenv("GA4_PROPERTY_ID") or "").strip()
+# Service account JSON as a single-line env string (preferred on Railway),
+# or a filesystem path via GA4_CREDENTIALS_FILE.
+GA4_CREDENTIALS_JSON = (os.getenv("GA4_CREDENTIALS_JSON") or "").strip()
+GA4_CREDENTIALS_FILE = (os.getenv("GA4_CREDENTIALS_FILE") or "").strip()
 
 # Moderator dashboard login brute-force protection (per IP)
 DASHBOARD_LOGIN_MAX_ATTEMPTS = 5

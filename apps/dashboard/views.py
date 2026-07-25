@@ -14,6 +14,7 @@ from .forms import (
     NameEffectsForm,
     PlayerLinksForm,
 )
+from .analytics import get_site_analytics
 from .models import ModeratorLoginLog
 from .overview import get_admin_overview
 from .services import (
@@ -303,5 +304,6 @@ def home_view(request):
         "player_links": links_form.player_links,
         "is_admin": is_admin,
         "overview": get_admin_overview(include_details=is_admin),
+        "site_analytics": get_site_analytics() if is_admin else None,
     }
     return render(request, "dashboard/home.html", context)
