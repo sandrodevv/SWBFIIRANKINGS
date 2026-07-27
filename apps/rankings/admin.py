@@ -155,11 +155,23 @@ class PlayerAdmin(admin.ModelAdmin):
         "name_burning",
         "name_smoke",
         "name_glitch",
+        "name_corrupt",
+        "name_beskar",
+        "name_particles",
+        "name_crack",
         "assignment_summary",
         "duelist_summary",
         "created_at",
     )
-    list_filter = ("name_burning", "name_smoke", "name_glitch")
+    list_filter = (
+        "name_burning",
+        "name_smoke",
+        "name_glitch",
+        "name_corrupt",
+        "name_beskar",
+        "name_particles",
+        "name_crack",
+    )
     search_fields = ("nickname", "username", "slug")
     prepopulated_fields = {"slug": ("nickname",)}
     readonly_fields = ("all_time_votes", "hero_gold_medals", "villain_gold_medals", "created_at")
@@ -177,6 +189,10 @@ class PlayerAdmin(admin.ModelAdmin):
         "name_burning",
         "name_smoke",
         "name_glitch",
+        "name_corrupt",
+        "name_beskar",
+        "name_particles",
+        "name_crack",
         "created_at",
     )
     inlines = (CharacterRankingInline, DuelistInline)

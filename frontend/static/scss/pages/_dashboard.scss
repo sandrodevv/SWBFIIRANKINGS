@@ -413,6 +413,26 @@
     color: #7dd3fc;
     border-color: rgba(34, 211, 238, 0.4);
   }
+
+  &--corrupt {
+    color: #e2e8f0;
+    border-color: rgba(148, 163, 184, 0.5);
+  }
+
+  &--beskar {
+    color: #c8d0d8;
+    border-color: rgba(139, 147, 156, 0.55);
+  }
+
+  &--particles {
+    color: #ff5e4c;
+    border-color: rgba(255, 94, 76, 0.5);
+  }
+
+  &--crack {
+    color: #7ec8d8;
+    border-color: rgba(29, 169, 204, 0.5);
+  }
 }
 
 .effects-roster__empty {

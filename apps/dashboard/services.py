@@ -235,21 +235,52 @@ def modify_player_assignments(
     return player, result
 
 
-def set_player_name_effects(player, name_burning, name_smoke, name_glitch):
+def set_player_name_effects(
+    player,
+    name_burning,
+    name_smoke,
+    name_glitch,
+    name_corrupt,
+    name_beskar,
+    name_particles,
+    name_crack,
+):
     burning = bool(name_burning)
     smoke = bool(name_smoke)
     glitch = bool(name_glitch)
+    corrupt = bool(name_corrupt)
+    beskar = bool(name_beskar)
+    particles = bool(name_particles)
+    crack = bool(name_crack)
     changed = (
         player.name_burning != burning
         or player.name_smoke != smoke
         or player.name_glitch != glitch
+        or player.name_corrupt != corrupt
+        or player.name_beskar != beskar
+        or player.name_particles != particles
+        or player.name_crack != crack
     )
     if not changed:
         return player, False
     player.name_burning = burning
     player.name_smoke = smoke
     player.name_glitch = glitch
-    player.save(update_fields=["name_burning", "name_smoke", "name_glitch"])
+    player.name_corrupt = corrupt
+    player.name_beskar = beskar
+    player.name_particles = particles
+    player.name_crack = crack
+    player.save(
+        update_fields=[
+            "name_burning",
+            "name_smoke",
+            "name_glitch",
+            "name_corrupt",
+            "name_beskar",
+            "name_particles",
+            "name_crack",
+        ]
+    )
     return player, True
 
 

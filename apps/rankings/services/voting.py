@@ -111,6 +111,10 @@ def get_vote_status(character_id, ip_hash, voter_hash):
             "last_voted_name_burning": None,
             "last_voted_name_smoke": None,
             "last_voted_name_glitch": None,
+            "last_voted_name_corrupt": None,
+            "last_voted_name_beskar": None,
+            "last_voted_name_particles": None,
+            "last_voted_name_crack": None,
             "period_ends_at": get_period_end(period).isoformat(),
         }
 
@@ -130,6 +134,10 @@ def get_vote_status(character_id, ip_hash, voter_hash):
         "last_voted_name_burning": player.name_burning,
         "last_voted_name_smoke": player.name_smoke,
         "last_voted_name_glitch": player.name_glitch,
+        "last_voted_name_corrupt": player.name_corrupt,
+        "last_voted_name_beskar": player.name_beskar,
+        "last_voted_name_particles": player.name_particles,
+        "last_voted_name_crack": player.name_crack,
         "period_ends_at": next_vote_at.isoformat(),
     }
 

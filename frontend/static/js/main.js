@@ -4,10 +4,12 @@ import { initPlayerPage } from "./pages/player.js";
 import { initPfpPage } from "./pages/pfp.js";
 import { initDuelistsPage } from "./pages/duelists.js";
 import { initSiteNav } from "./nav.js";
+import { initParticleNames } from "./effects/particle-name.js";
 import { getSlugFromPath, getPlayerSlugFromPath } from "./utils/format.js";
 
 function init() {
   initSiteNav();
+  initParticleNames();
 
   if (getPlayerSlugFromPath()) {
     initPlayerPage();

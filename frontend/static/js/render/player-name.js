@@ -10,24 +10,44 @@ function sideClass(side) {
   return "";
 }
 
+function emptyEffects() {
+  return {
+    burning: false,
+    smoke: false,
+    glitch: false,
+    corrupt: false,
+    beskar: false,
+    particles: false,
+    crack: false,
+  };
+}
+
 function normalizeEffects(effects) {
-  if (!effects) return { burning: false, smoke: false, glitch: false };
+  if (!effects) return emptyEffects();
   if (typeof effects === "string") {
     return {
       burning: effects === "burning",
       smoke: effects === "smoke",
       glitch: effects === "glitch",
+      corrupt: effects === "corrupt",
+      beskar: effects === "beskar",
+      particles: effects === "particles",
+      crack: effects === "crack",
     };
   }
   return {
     burning: !!effects.burning,
     smoke: !!effects.smoke,
     glitch: !!effects.glitch,
+    corrupt: !!effects.corrupt,
+    beskar: !!effects.beskar,
+    particles: !!effects.particles,
+    crack: !!effects.crack,
   };
 }
 
 export function nameEffectsFrom(obj) {
-  if (!obj) return { burning: false, smoke: false, glitch: false };
+  if (!obj) return emptyEffects();
   return {
     burning: !!(
       obj.name_burning ??
@@ -44,12 +64,32 @@ export function nameEffectsFrom(obj) {
       obj.player_name_glitch ??
       obj.last_voted_name_glitch
     ),
+    corrupt: !!(
+      obj.name_corrupt ??
+      obj.player_name_corrupt ??
+      obj.last_voted_name_corrupt
+    ),
+    beskar: !!(
+      obj.name_beskar ??
+      obj.player_name_beskar ??
+      obj.last_voted_name_beskar
+    ),
+    particles: !!(
+      obj.name_particles ??
+      obj.player_name_particles ??
+      obj.last_voted_name_particles
+    ),
+    crack: !!(
+      obj.name_crack ??
+      obj.player_name_crack ??
+      obj.last_voted_name_crack
+    ),
   };
 }
 
 /** @deprecated Prefer nameEffectsFrom */
 export function burningEffect(flag) {
-  return { burning: !!flag, smoke: false, glitch: false };
+  return { ...emptyEffects(), burning: !!flag };
 }
 
 function effectCharClass({ burning, smoke }) {
@@ -97,14 +137,78 @@ function createGlitchElement(nickname, playerSlug, { burning, smoke }) {
   return el;
 }
 
+function createCorruptElement(nickname, playerSlug, { burning, smoke }) {
+  const classes = [
+    "corrupt-name",
+    playerSlug ? "player-name__link player-name__link--corrupt" : "",
+    burning ? "corrupt-name--burning" : "",
+    smoke ? "corrupt-name--smoke" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const el = createElement(playerSlug ? "a" : "span", classes, nickname);
+  el.dataset.text = nickname;
+  if (playerSlug) el.href = `/players/${playerSlug}/`;
+  return el;
+}
+
+function createBeskarElement(nickname, playerSlug) {
+  const classes = [
+    "beskar-text",
+    playerSlug ? "player-name__link player-name__link--beskar" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const el = createElement(playerSlug ? "a" : "span", classes, nickname);
+  if (playerSlug) el.href = `/players/${playerSlug}/`;
+  return el;
+}
+
+function createParticlesElement(nickname, playerSlug) {
+  const classes = [
+    "particle-name",
+    playerSlug ? "player-name__link player-name__link--particles" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const el = createElement(playerSlug ? "a" : "span", classes, nickname);
+  el.dataset.text = nickname;
+  if (playerSlug) el.href = `/players/${playerSlug}/`;
+  return el;
+}
+
+function createCrackElement(nickname, playerSlug) {
+  const classes = [
+    "crack-name",
+    playerSlug ? "player-name__link player-name__link--crack" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const el = createElement(playerSlug ? "a" : "span", classes);
+  el.dataset.text = nickname;
+  el.appendChild(document.createTextNode(nickname));
+  const mid = createElement("span", "crack-name__mid", nickname);
+  mid.setAttribute("aria-hidden", "true");
+  el.appendChild(mid);
+  if (playerSlug) el.href = `/players/${playerSlug}/`;
+  return el;
+}
+
 function createNicknameElement(nickname, playerSlug, effects) {
   const normalized = normalizeEffects(effects);
-  const { burning, smoke, glitch } = normalized;
-  const hasEffect = burning || smoke || glitch;
+  const { burning, smoke, glitch, corrupt, beskar, particles, crack } =
+    normalized;
+  const hasEffect =
+    burning || smoke || glitch || corrupt || beskar || particles || crack;
   const nickClasses = ["player-name__nickname"];
   if (burning) nickClasses.push("player-name__nickname--burning");
   if (smoke) nickClasses.push("player-name__nickname--smoke");
   if (glitch) nickClasses.push("player-name__nickname--glitch");
+  if (corrupt) nickClasses.push("player-name__nickname--corrupt");
+  if (beskar) nickClasses.push("player-name__nickname--beskar");
+  if (particles) nickClasses.push("player-name__nickname--particles");
+  if (crack) nickClasses.push("player-name__nickname--crack");
   const nickEl = createElement("span", nickClasses.join(" "));
 
   if (!hasEffect) {
@@ -122,6 +226,26 @@ function createNicknameElement(nickname, playerSlug, effects) {
 
   if (glitch) {
     nickEl.appendChild(createGlitchElement(nickname, playerSlug, normalized));
+    return nickEl;
+  }
+
+  if (corrupt) {
+    nickEl.appendChild(createCorruptElement(nickname, playerSlug, normalized));
+    return nickEl;
+  }
+
+  if (beskar) {
+    nickEl.appendChild(createBeskarElement(nickname, playerSlug));
+    return nickEl;
+  }
+
+  if (particles) {
+    nickEl.appendChild(createParticlesElement(nickname, playerSlug));
+    return nickEl;
+  }
+
+  if (crack) {
+    nickEl.appendChild(createCrackElement(nickname, playerSlug));
     return nickEl;
   }
 
@@ -160,6 +284,10 @@ export function renderPlayerName(
   if (normalized.burning) classes.push("player-name--burning");
   if (normalized.smoke) classes.push("player-name--smoke");
   if (normalized.glitch) classes.push("player-name--glitch");
+  if (normalized.corrupt) classes.push("player-name--corrupt");
+  if (normalized.beskar) classes.push("player-name--beskar");
+  if (normalized.particles) classes.push("player-name--particles");
+  if (normalized.crack) classes.push("player-name--crack");
   const wrap = createElement(tag, classes.filter(Boolean).join(" "));
   wrap.appendChild(createNicknameElement(nickname, playerSlug, normalized));
 
@@ -211,13 +339,92 @@ function glitchNicknameHtml(nickname, playerSlug, { burning, smoke }) {
   return `<span class="${classes}" data-text="${data}">${text}</span>`;
 }
 
+function corruptNicknameHtml(nickname, playerSlug, { burning, smoke }) {
+  const classes = [
+    "corrupt-name",
+    playerSlug ? "player-name__link player-name__link--corrupt" : "",
+    burning ? "corrupt-name--burning" : "",
+    smoke ? "corrupt-name--smoke" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const text = escapeHtml(nickname);
+  const data = escapeAttr(nickname);
+  if (playerSlug) {
+    return `<a href="/players/${escapeAttr(playerSlug)}/" class="${classes}" data-text="${data}">${text}</a>`;
+  }
+  return `<span class="${classes}" data-text="${data}">${text}</span>`;
+}
+
+function beskarNicknameHtml(nickname, playerSlug) {
+  const classes = [
+    "beskar-text",
+    playerSlug ? "player-name__link player-name__link--beskar" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const text = escapeHtml(nickname);
+  if (playerSlug) {
+    return `<a href="/players/${escapeAttr(playerSlug)}/" class="${classes}">${text}</a>`;
+  }
+  return `<span class="${classes}">${text}</span>`;
+}
+
+function particlesNicknameHtml(nickname, playerSlug) {
+  const classes = [
+    "particle-name",
+    playerSlug ? "player-name__link player-name__link--particles" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const text = escapeHtml(nickname);
+  const data = escapeAttr(nickname);
+  if (playerSlug) {
+    return `<a href="/players/${escapeAttr(playerSlug)}/" class="${classes}" data-text="${data}">${text}</a>`;
+  }
+  return `<span class="${classes}" data-text="${data}">${text}</span>`;
+}
+
+function crackNicknameHtml(nickname, playerSlug) {
+  const classes = [
+    "crack-name",
+    playerSlug ? "player-name__link player-name__link--crack" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const text = escapeHtml(nickname);
+  const data = escapeAttr(nickname);
+  const mid = `<span class="crack-name__mid" aria-hidden="true">${text}</span>`;
+  if (playerSlug) {
+    return `<a href="/players/${escapeAttr(playerSlug)}/" class="${classes}" data-text="${data}">${text}${mid}</a>`;
+  }
+  return `<span class="${classes}" data-text="${data}">${text}${mid}</span>`;
+}
+
 function effectNicknameHtml(nickname, playerSlug, effects) {
   const normalized = normalizeEffects(effects);
-  const { burning, smoke, glitch } = normalized;
+  const { burning, smoke, glitch, corrupt, beskar, particles, crack } =
+    normalized;
   const prefix = smoke ? smokeHtml() : "";
 
   if (glitch) {
     return `${prefix}${glitchNicknameHtml(nickname, playerSlug, normalized)}`;
+  }
+
+  if (corrupt) {
+    return `${prefix}${corruptNicknameHtml(nickname, playerSlug, normalized)}`;
+  }
+
+  if (beskar) {
+    return `${prefix}${beskarNicknameHtml(nickname, playerSlug)}`;
+  }
+
+  if (particles) {
+    return `${prefix}${particlesNicknameHtml(nickname, playerSlug)}`;
+  }
+
+  if (crack) {
+    return `${prefix}${crackNicknameHtml(nickname, playerSlug)}`;
   }
 
   const charClass = effectCharClass(normalized);
@@ -250,12 +457,23 @@ export function formatPlayerNameHtml(
   effects = null
 ) {
   const normalized = normalizeEffects(effects);
-  const hasEffect = normalized.burning || normalized.smoke || normalized.glitch;
+  const hasEffect =
+    normalized.burning ||
+    normalized.smoke ||
+    normalized.glitch ||
+    normalized.corrupt ||
+    normalized.beskar ||
+    normalized.particles ||
+    normalized.crack;
   const modifier = [
     sideClass(side),
     normalized.burning ? "player-name--burning" : "",
     normalized.smoke ? "player-name--smoke" : "",
     normalized.glitch ? "player-name--glitch" : "",
+    normalized.corrupt ? "player-name--corrupt" : "",
+    normalized.beskar ? "player-name--beskar" : "",
+    normalized.particles ? "player-name--particles" : "",
+    normalized.crack ? "player-name--crack" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -265,6 +483,10 @@ export function formatPlayerNameHtml(
     normalized.burning ? "player-name__nickname--burning" : "",
     normalized.smoke ? "player-name__nickname--smoke" : "",
     normalized.glitch ? "player-name__nickname--glitch" : "",
+    normalized.corrupt ? "player-name__nickname--corrupt" : "",
+    normalized.beskar ? "player-name__nickname--beskar" : "",
+    normalized.particles ? "player-name__nickname--particles" : "",
+    normalized.crack ? "player-name__nickname--crack" : "",
   ]
     .filter(Boolean)
     .join(" ");

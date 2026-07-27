@@ -16,16 +16,36 @@ from apps.rankings.services.weekly_reset import get_current_period, get_period_e
 def _name_effects_overview():
     players = list(
         Player.objects.filter(
-            Q(name_burning=True) | Q(name_smoke=True) | Q(name_glitch=True)
+            Q(name_burning=True)
+            | Q(name_smoke=True)
+            | Q(name_glitch=True)
+            | Q(name_corrupt=True)
+            | Q(name_beskar=True)
+            | Q(name_particles=True)
+            | Q(name_crack=True)
         )
         .order_by("nickname")
-        .values("nickname", "slug", "name_burning", "name_smoke", "name_glitch")
+        .values(
+            "nickname",
+            "slug",
+            "name_burning",
+            "name_smoke",
+            "name_glitch",
+            "name_corrupt",
+            "name_beskar",
+            "name_particles",
+            "name_crack",
+        )
     )
     return {
         "any": len(players),
         "burning": sum(1 for player in players if player["name_burning"]),
         "smoke": sum(1 for player in players if player["name_smoke"]),
         "glitch": sum(1 for player in players if player["name_glitch"]),
+        "corrupt": sum(1 for player in players if player["name_corrupt"]),
+        "beskar": sum(1 for player in players if player["name_beskar"]),
+        "particles": sum(1 for player in players if player["name_particles"]),
+        "crack": sum(1 for player in players if player["name_crack"]),
         "players": players,
     }
 

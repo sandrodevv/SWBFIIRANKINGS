@@ -402,6 +402,26 @@ class NameEffectsForm(forms.Form):
         initial=False,
         label="Glitch nickname",
     )
+    name_corrupt = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Corrupt nickname",
+    )
+    name_beskar = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Beskar nickname",
+    )
+    name_particles = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Particles nickname",
+    )
+    name_crack = forms.BooleanField(
+        required=False,
+        initial=False,
+        label="Crack nickname",
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -412,6 +432,10 @@ class NameEffectsForm(forms.Form):
                 "burning": bool(player.name_burning),
                 "smoke": bool(player.name_smoke),
                 "glitch": bool(player.name_glitch),
+                "corrupt": bool(player.name_corrupt),
+                "beskar": bool(player.name_beskar),
+                "particles": bool(player.name_particles),
+                "crack": bool(player.name_crack),
             }
             for player in players
         }

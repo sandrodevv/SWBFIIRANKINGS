@@ -14,6 +14,10 @@ class TopPlayerSerializer(serializers.Serializer):
     name_burning = serializers.BooleanField()
     name_smoke = serializers.BooleanField()
     name_glitch = serializers.BooleanField()
+    name_corrupt = serializers.BooleanField()
+    name_beskar = serializers.BooleanField()
+    name_particles = serializers.BooleanField()
+    name_crack = serializers.BooleanField()
 
 
 class PlayerCharacterStatSerializer(serializers.Serializer):
@@ -48,6 +52,10 @@ class PlayerProfileSerializer(serializers.Serializer):
     name_burning = serializers.BooleanField()
     name_smoke = serializers.BooleanField()
     name_glitch = serializers.BooleanField()
+    name_corrupt = serializers.BooleanField()
+    name_beskar = serializers.BooleanField()
+    name_particles = serializers.BooleanField()
+    name_crack = serializers.BooleanField()
     all_time_votes = serializers.IntegerField()
     weekly_votes = serializers.IntegerField()
     ranking_weekly_votes = serializers.IntegerField()
@@ -97,6 +105,10 @@ class CharacterSerializer(serializers.ModelSerializer):
             "name_burning": top.player.name_burning,
             "name_smoke": top.player.name_smoke,
             "name_glitch": top.player.name_glitch,
+            "name_corrupt": top.player.name_corrupt,
+            "name_beskar": top.player.name_beskar,
+            "name_particles": top.player.name_particles,
+            "name_crack": top.player.name_crack,
         }
 
     def get_total_votes(self, obj):
@@ -126,6 +138,10 @@ class RankingSerializer(serializers.ModelSerializer):
     name_burning = serializers.BooleanField(source="player.name_burning", read_only=True)
     name_smoke = serializers.BooleanField(source="player.name_smoke", read_only=True)
     name_glitch = serializers.BooleanField(source="player.name_glitch", read_only=True)
+    name_corrupt = serializers.BooleanField(source="player.name_corrupt", read_only=True)
+    name_beskar = serializers.BooleanField(source="player.name_beskar", read_only=True)
+    name_particles = serializers.BooleanField(source="player.name_particles", read_only=True)
+    name_crack = serializers.BooleanField(source="player.name_crack", read_only=True)
 
     class Meta:
         model = CharacterRanking
@@ -138,6 +154,10 @@ class RankingSerializer(serializers.ModelSerializer):
             "name_burning",
             "name_smoke",
             "name_glitch",
+            "name_corrupt",
+            "name_beskar",
+            "name_particles",
+            "name_crack",
             "votes",
             "all_time_votes",
             "player_all_time_votes",
@@ -171,6 +191,10 @@ class VoteStatusSerializer(serializers.Serializer):
     last_voted_name_burning = serializers.BooleanField(required=False, allow_null=True)
     last_voted_name_smoke = serializers.BooleanField(required=False, allow_null=True)
     last_voted_name_glitch = serializers.BooleanField(required=False, allow_null=True)
+    last_voted_name_corrupt = serializers.BooleanField(required=False, allow_null=True)
+    last_voted_name_beskar = serializers.BooleanField(required=False, allow_null=True)
+    last_voted_name_particles = serializers.BooleanField(required=False, allow_null=True)
+    last_voted_name_crack = serializers.BooleanField(required=False, allow_null=True)
     period_ends_at = serializers.CharField(allow_null=True)
 
 
@@ -186,6 +210,10 @@ class ChampionSerializer(serializers.Serializer):
     player_name_burning = serializers.BooleanField()
     player_name_smoke = serializers.BooleanField()
     player_name_glitch = serializers.BooleanField()
+    player_name_corrupt = serializers.BooleanField()
+    player_name_beskar = serializers.BooleanField()
+    player_name_particles = serializers.BooleanField()
+    player_name_crack = serializers.BooleanField()
     player_all_time_votes = serializers.IntegerField()
     votes = serializers.IntegerField()
 
@@ -197,6 +225,10 @@ class RecentVoteSerializer(serializers.Serializer):
     player_name_burning = serializers.BooleanField()
     player_name_smoke = serializers.BooleanField()
     player_name_glitch = serializers.BooleanField()
+    player_name_corrupt = serializers.BooleanField()
+    player_name_beskar = serializers.BooleanField()
+    player_name_particles = serializers.BooleanField()
+    player_name_crack = serializers.BooleanField()
     character_name = serializers.CharField()
     character_slug = serializers.CharField()
     character_side = serializers.CharField()
@@ -218,6 +250,10 @@ class PfpRankingSerializer(serializers.Serializer):
     player_name_burning = serializers.BooleanField()
     player_name_smoke = serializers.BooleanField()
     player_name_glitch = serializers.BooleanField()
+    player_name_corrupt = serializers.BooleanField()
+    player_name_beskar = serializers.BooleanField()
+    player_name_particles = serializers.BooleanField()
+    player_name_crack = serializers.BooleanField()
     character_name = serializers.CharField()
     character_slug = serializers.CharField()
     character_side = serializers.CharField()
@@ -232,6 +268,10 @@ class DuelistRankingSerializer(serializers.Serializer):
     name_burning = serializers.BooleanField()
     name_smoke = serializers.BooleanField()
     name_glitch = serializers.BooleanField()
+    name_corrupt = serializers.BooleanField()
+    name_beskar = serializers.BooleanField()
+    name_particles = serializers.BooleanField()
+    name_crack = serializers.BooleanField()
     region = serializers.CharField()
     region_label = serializers.CharField()
     votes = serializers.IntegerField()

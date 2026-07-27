@@ -62,6 +62,22 @@ class Player(models.Model):
         default=False,
         help_text="Show the glitch nickname animation on this player everywhere.",
     )
+    name_corrupt = models.BooleanField(
+        default=False,
+        help_text="Show the corrupt fade/glitch nickname animation on this player everywhere.",
+    )
+    name_beskar = models.BooleanField(
+        default=False,
+        help_text="Show the beskar metallic shimmer nickname animation on this player everywhere.",
+    )
+    name_particles = models.BooleanField(
+        default=False,
+        help_text="Show the particle-text nickname animation on this player everywhere.",
+    )
+    name_crack = models.BooleanField(
+        default=False,
+        help_text="Show the crack/shake nickname animation on this player everywhere.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -645,7 +645,7 @@
         {% if is_admin %}
         <div class="dashboard-card dashboard-card--narrow">
             <h2>Name effects</h2>
-            <p class="text-muted">Enable burning, smoke, and/or glitch nickname animations site-wide.</p>
+            <p class="text-muted">Enable burning, smoke, glitch, corrupt, beskar, particles, and/or crack nickname animations site-wide.</p>
 
             {% if overview.name_effects %}
             <div class="effects-roster" data-effects-roster>
@@ -654,6 +654,10 @@
                     <span>Burn {{ overview.name_effects.burning }}</span>
                     <span>Smoke {{ overview.name_effects.smoke }}</span>
                     <span>Glitch {{ overview.name_effects.glitch }}</span>
+                    <span>Corrupt {{ overview.name_effects.corrupt }}</span>
+                    <span>Beskar {{ overview.name_effects.beskar }}</span>
+                    <span>Particles {{ overview.name_effects.particles }}</span>
+                    <span>Crack {{ overview.name_effects.crack }}</span>
                 </div>
 
                 <div class="form-field effects-roster__filter">
@@ -663,6 +667,10 @@
                         <option value="burning">Burning</option>
                         <option value="smoke">Smoke</option>
                         <option value="glitch">Glitch</option>
+                        <option value="corrupt">Corrupt</option>
+                        <option value="beskar">Beskar</option>
+                        <option value="particles">Particles</option>
+                        <option value="crack">Crack</option>
                     </select>
                 </div>
 
@@ -673,12 +681,20 @@
                         data-burning="{{ player.name_burning|yesno:'1,0' }}"
                         data-smoke="{{ player.name_smoke|yesno:'1,0' }}"
                         data-glitch="{{ player.name_glitch|yesno:'1,0' }}"
+                        data-corrupt="{{ player.name_corrupt|yesno:'1,0' }}"
+                        data-beskar="{{ player.name_beskar|yesno:'1,0' }}"
+                        data-particles="{{ player.name_particles|yesno:'1,0' }}"
+                        data-crack="{{ player.name_crack|yesno:'1,0' }}"
                     >
                         <a href="/players/{{ player.slug }}/">{{ player.nickname }}</a>
                         <span class="effects-roster__tags">
                             {% if player.name_burning %}<span class="effects-tag effects-tag--burn">burn</span>{% endif %}
                             {% if player.name_smoke %}<span class="effects-tag effects-tag--smoke">smoke</span>{% endif %}
                             {% if player.name_glitch %}<span class="effects-tag effects-tag--glitch">glitch</span>{% endif %}
+                            {% if player.name_corrupt %}<span class="effects-tag effects-tag--corrupt">corrupt</span>{% endif %}
+                            {% if player.name_beskar %}<span class="effects-tag effects-tag--beskar">beskar</span>{% endif %}
+                            {% if player.name_particles %}<span class="effects-tag effects-tag--particles">particles</span>{% endif %}
+                            {% if player.name_crack %}<span class="effects-tag effects-tag--crack">crack</span>{% endif %}
                         </span>
                     </div>
                     {% empty %}
@@ -722,6 +738,30 @@
                     <span>{{ burning_form.name_glitch.label }}</span>
                 </label>
                 {{ burning_form.name_glitch.errors }}
+
+                <label class="form-check">
+                    {{ burning_form.name_corrupt }}
+                    <span>{{ burning_form.name_corrupt.label }}</span>
+                </label>
+                {{ burning_form.name_corrupt.errors }}
+
+                <label class="form-check">
+                    {{ burning_form.name_beskar }}
+                    <span>{{ burning_form.name_beskar.label }}</span>
+                </label>
+                {{ burning_form.name_beskar.errors }}
+
+                <label class="form-check">
+                    {{ burning_form.name_particles }}
+                    <span>{{ burning_form.name_particles.label }}</span>
+                </label>
+                {{ burning_form.name_particles.errors }}
+
+                <label class="form-check">
+                    {{ burning_form.name_crack }}
+                    <span>{{ burning_form.name_crack.label }}</span>
+                </label>
+                {{ burning_form.name_crack.errors }}
 
                 <button type="submit" class="btn btn-primary btn-block">Save name effects</button>
             </form>
@@ -900,15 +940,23 @@
   var effectsBurningCheckbox = document.getElementById("id_effects-name_burning");
   var effectsSmokeCheckbox = document.getElementById("id_effects-name_smoke");
   var effectsGlitchCheckbox = document.getElementById("id_effects-name_glitch");
+  var effectsCorruptCheckbox = document.getElementById("id_effects-name_corrupt");
+  var effectsBeskarCheckbox = document.getElementById("id_effects-name_beskar");
+  var effectsParticlesCheckbox = document.getElementById("id_effects-name_particles");
+  var effectsCrackCheckbox = document.getElementById("id_effects-name_crack");
   var effectsHint = document.querySelector("[data-effects-hint]");
 
   function syncEffectsForm() {
-    if (!effectsPlayerSelect || !effectsBurningCheckbox || !effectsSmokeCheckbox || !effectsGlitchCheckbox) return;
+    if (!effectsPlayerSelect || !effectsBurningCheckbox || !effectsSmokeCheckbox || !effectsGlitchCheckbox || !effectsCorruptCheckbox || !effectsBeskarCheckbox || !effectsParticlesCheckbox || !effectsCrackCheckbox) return;
     var selected = effectsPlayerSelect.value;
     if (!selected) {
       effectsBurningCheckbox.checked = false;
       effectsSmokeCheckbox.checked = false;
       effectsGlitchCheckbox.checked = false;
+      effectsCorruptCheckbox.checked = false;
+      effectsBeskarCheckbox.checked = false;
+      effectsParticlesCheckbox.checked = false;
+      effectsCrackCheckbox.checked = false;
       if (effectsHint) effectsHint.textContent = "Select a player to see their current effects.";
       return;
     }
@@ -916,11 +964,19 @@
     effectsBurningCheckbox.checked = !!info.burning;
     effectsSmokeCheckbox.checked = !!info.smoke;
     effectsGlitchCheckbox.checked = !!info.glitch;
+    effectsCorruptCheckbox.checked = !!info.corrupt;
+    effectsBeskarCheckbox.checked = !!info.beskar;
+    effectsParticlesCheckbox.checked = !!info.particles;
+    effectsCrackCheckbox.checked = !!info.crack;
     if (effectsHint) {
       var parts = [];
       parts.push(info.burning ? "burning ON" : "burning OFF");
       parts.push(info.smoke ? "smoke ON" : "smoke OFF");
       parts.push(info.glitch ? "glitch ON" : "glitch OFF");
+      parts.push(info.corrupt ? "corrupt ON" : "corrupt OFF");
+      parts.push(info.beskar ? "beskar ON" : "beskar OFF");
+      parts.push(info.particles ? "particles ON" : "particles OFF");
+      parts.push(info.crack ? "crack ON" : "crack OFF");
       effectsHint.textContent = "Current: " + parts.join(", ") + ".";
     }
   }
@@ -944,7 +1000,11 @@
         filter === "any" ||
         (filter === "burning" && row.getAttribute("data-burning") === "1") ||
         (filter === "smoke" && row.getAttribute("data-smoke") === "1") ||
-        (filter === "glitch" && row.getAttribute("data-glitch") === "1");
+        (filter === "glitch" && row.getAttribute("data-glitch") === "1") ||
+        (filter === "corrupt" && row.getAttribute("data-corrupt") === "1") ||
+        (filter === "beskar" && row.getAttribute("data-beskar") === "1") ||
+        (filter === "particles" && row.getAttribute("data-particles") === "1") ||
+        (filter === "crack" && row.getAttribute("data-crack") === "1");
       row.hidden = !show;
       if (show) visible += 1;
     });

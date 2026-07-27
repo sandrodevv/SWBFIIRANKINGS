@@ -198,12 +198,22 @@ def home_view(request):
                     name_burning=burning_form.cleaned_data["name_burning"],
                     name_smoke=burning_form.cleaned_data["name_smoke"],
                     name_glitch=burning_form.cleaned_data["name_glitch"],
+                    name_corrupt=burning_form.cleaned_data["name_corrupt"],
+                    name_beskar=burning_form.cleaned_data["name_beskar"],
+                    name_particles=burning_form.cleaned_data["name_particles"],
+                    name_crack=burning_form.cleaned_data["name_crack"],
                 )
                 if changed:
                     parts = []
                     parts.append("burning on" if player.name_burning else "burning off")
                     parts.append("smoke on" if player.name_smoke else "smoke off")
                     parts.append("glitch on" if player.name_glitch else "glitch off")
+                    parts.append("corrupt on" if player.name_corrupt else "corrupt off")
+                    parts.append("beskar on" if player.name_beskar else "beskar off")
+                    parts.append(
+                        "particles on" if player.name_particles else "particles off"
+                    )
+                    parts.append("crack on" if player.name_crack else "crack off")
                     messages.success(
                         request,
                         f"Name effects for {player.nickname}: {', '.join(parts)}.",
