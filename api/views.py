@@ -242,6 +242,7 @@ class PlayerDetailAPIView(APIView):
         )
         character_stats = [_build_character_stat(ranking) for ranking in rankings]
         ranking_weekly_votes = sum(stat["weekly_votes"] for stat in character_stats)
+        ranking_last_week_votes = sum(ranking.last_week_votes for ranking in rankings)
         ranking_all_time_votes = sum(stat["all_time_votes"] for stat in character_stats)
 
         hero_assignment = next((stat for stat in character_stats if stat["side"] == "hero"), None)
@@ -251,6 +252,7 @@ class PlayerDetailAPIView(APIView):
 
         duelist_stat = None
         duelist_weekly_votes = 0
+        duelist_last_week_votes = 0
         duelist_all_time_votes = 0
         try:
             duelist = player.duelist
@@ -259,6 +261,7 @@ class PlayerDetailAPIView(APIView):
         if duelist is not None:
             duelist_stat = _build_duelist_stat(duelist)
             duelist_weekly_votes = duelist.votes
+            duelist_last_week_votes = duelist.last_week_votes
             duelist_all_time_votes = duelist.all_time_votes
 
         payload = {
@@ -277,10 +280,13 @@ class PlayerDetailAPIView(APIView):
             "name_particles": player.name_particles,
             "name_crack": player.name_crack,
             "weekly_votes": ranking_weekly_votes + duelist_weekly_votes,
+            "last_week_votes": ranking_last_week_votes + duelist_last_week_votes,
             "all_time_votes": ranking_all_time_votes + duelist_all_time_votes,
             "ranking_weekly_votes": ranking_weekly_votes,
+            "ranking_last_week_votes": ranking_last_week_votes,
             "ranking_all_time_votes": ranking_all_time_votes,
             "duelist_weekly_votes": duelist_weekly_votes,
+            "duelist_last_week_votes": duelist_last_week_votes,
             "duelist_all_time_votes": duelist_all_time_votes,
             "hero_gold_medals": player.hero_gold_medals,
             "villain_gold_medals": player.villain_gold_medals,

@@ -86,6 +86,343 @@
   gap: $spacing-lg;
 }
 
+.player-vote-chart {
+  padding-top: 0;
+  padding-bottom: $spacing-3xl;
+}
+
+// In-flow under duelist by default; fixed right only when side room exists.
+.player-vote-chart-shell {
+  width: 100%;
+  max-width: 22rem;
+  margin: 0 auto;
+
+  &.is-side {
+    position: fixed;
+    top: 5.5rem;
+    right: 1.25rem;
+    z-index: 40;
+    width: 17.5rem;
+    max-width: 17.5rem;
+    margin: 0;
+  }
+}
+
+.vote-chart {
+  position: relative;
+  width: 100%;
+  padding: $spacing-md $spacing-lg $spacing-lg;
+  background:
+    radial-gradient(ellipse at 18% 0%, rgba(168, 85, 247, 0.12), transparent 50%),
+    radial-gradient(ellipse at 82% 100%, rgba(34, 197, 94, 0.1), transparent 48%),
+    $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  animation: fadeInUp 0.55s ease;
+  overflow: hidden;
+}
+
+.vote-chart__stage {
+  position: relative;
+}
+
+.vote-chart__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  align-items: start;
+}
+
+.vote-chart__ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.35rem 0.15rem 0.15rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+
+  &:hover,
+  &:focus-visible,
+  &.is-active {
+    transform: translateY(-3px);
+    outline: none;
+  }
+
+  &:focus-visible .vote-chart__ring-visual {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+  }
+}
+
+.vote-chart__ring-visual {
+  position: relative;
+  width: 6.75rem;
+  height: 6.75rem;
+}
+
+.vote-chart__svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.vote-chart__track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 7;
+
+  &--week {
+    stroke-width: 3;
+    stroke: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.vote-chart__arc {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.vote-chart__arc--week {
+  stroke-width: 3;
+  opacity: 0.9;
+}
+
+.vote-chart__arc--ranking {
+  stroke: $color-blue-light;
+  filter: drop-shadow(0 0 6px rgba($color-blue, 0.55));
+}
+
+.vote-chart__arc--duelist {
+  stroke: $color-gold-light;
+  filter: drop-shadow(0 0 6px rgba($color-gold, 0.5));
+}
+
+.vote-chart__ring--last {
+  .vote-chart__arc--week {
+    stroke: #a855f7;
+  }
+
+  .vote-chart__value {
+    color: #d8b4fe;
+  }
+
+  &:hover .vote-chart__label,
+  &:focus-visible .vote-chart__label,
+  &.is-active .vote-chart__label {
+    color: #d8b4fe;
+  }
+}
+
+.vote-chart__ring--this {
+  .vote-chart__arc--week {
+    stroke: #22c55e;
+  }
+
+  .vote-chart__value {
+    color: #86efac;
+  }
+
+  &:hover .vote-chart__label,
+  &:focus-visible .vote-chart__label,
+  &.is-active .vote-chart__label {
+    color: #86efac;
+  }
+}
+
+.vote-chart__ring-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.vote-chart__value {
+  font-family: $font-display;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.vote-chart__unit {
+  margin-top: 0.15rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $color-muted;
+}
+
+.vote-chart__label {
+  font-family: $font-display;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-muted;
+}
+
+.vote-chart__split {
+  width: 100%;
+  max-width: 7.5rem;
+}
+
+.vote-chart__split-track {
+  display: flex;
+  height: 0.35rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.vote-chart__split-fill {
+  display: block;
+  height: 100%;
+
+  &--ranking {
+    background: linear-gradient(90deg, $color-blue, $color-blue-light);
+  }
+
+  &--duelist {
+    background: linear-gradient(90deg, $color-gold, $color-gold-light);
+  }
+}
+
+.vote-chart__split-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.35rem;
+  margin-top: 0.3rem;
+  font-size: 0.65rem;
+  color: $color-muted;
+}
+
+.vote-chart__tooltip {
+  position: absolute;
+  z-index: 4;
+  min-width: 10.5rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: $radius-md;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(10, 14, 23, 0.94);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vote-chart__tooltip-title {
+  font-family: $font-display;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-muted;
+  margin-bottom: 0.2rem;
+}
+
+.vote-chart__tooltip-total {
+  font-family: $font-display;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: $color-white;
+  margin-bottom: 0.65rem;
+}
+
+.vote-chart__tooltip-rows {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.vote-chart__tooltip-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8125rem;
+  color: $color-muted;
+
+  strong {
+    color: $color-white;
+    font-weight: 600;
+  }
+}
+
+.vote-chart__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  margin-top: $spacing-md;
+  padding-top: $spacing-sm;
+  border-top: 1px solid $color-border;
+}
+
+.vote-chart__delta {
+  font-family: $font-display;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+
+  &--up {
+    color: #4ade80;
+  }
+
+  &--down {
+    color: #f87171;
+  }
+
+  &--flat {
+    color: $color-muted;
+  }
+}
+
+.vote-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+}
+
+.vote-chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8125rem;
+  color: $color-muted;
+}
+
+.vote-chart__swatch {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 2px;
+  flex-shrink: 0;
+
+  &--ranking {
+    background: linear-gradient(135deg, $color-blue-light, $color-blue);
+    box-shadow: 0 0 0 1px rgba($color-blue, 0.35);
+  }
+
+  &--duelist {
+    background: linear-gradient(135deg, $color-gold-light, $color-gold);
+    box-shadow: 0 0 0 1px rgba($color-gold, 0.35);
+  }
+}
+
 .player-assignments {
   padding-top: 0;
   padding-bottom: $spacing-xl;
@@ -93,7 +430,7 @@
 
 .player-duelist {
   padding-top: 0;
-  padding-bottom: $spacing-3xl;
+  padding-bottom: $spacing-xl;
 }
 
 .player-assignment-grid,
@@ -204,5 +541,36 @@
 
   &:hover {
     color: $color-gold;
+  }
+}
+
+@media (max-width: #{$breakpoint-md - 1px}) {
+  .player-vote-chart-shell {
+    max-width: 18.5rem;
+  }
+
+  .vote-chart {
+    padding: $spacing-sm $spacing-md $spacing-md;
+  }
+
+  .vote-chart__ring-visual {
+    width: 5.75rem;
+    height: 5.75rem;
+  }
+
+  .vote-chart__value {
+    font-size: 1.05rem;
+  }
+
+  .vote-chart__meta {
+    gap: 0.35rem;
+  }
+
+  .vote-chart__legend {
+    gap: 0.5rem 0.85rem;
+  }
+
+  .vote-chart__legend-item {
+    font-size: 0.75rem;
   }
 }

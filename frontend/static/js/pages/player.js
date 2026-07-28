@@ -1,6 +1,7 @@
 import { getPlayer } from "../api/client.js";
 import { createBadge } from "../render/character-card.js";
 import { nameEffectsFrom, renderPlayerName } from "../render/player-name.js";
+import { renderVoteChart, bindVoteChartPlacement } from "../render/vote-chart.js";
 import { getPlayerSlugFromPath, formatNumber } from "../utils/format.js";
 import { showError, showLoading, createElement, clearElement } from "../utils/dom.js";
 
@@ -137,12 +138,16 @@ function renderEmptyDuelist() {
 async function loadPlayerProfile() {
   const slug = getPlayerSlugFromPath();
   const headerContainer = document.querySelector('[data-container="player-header"]');
+  const chartContainer = document.querySelector('[data-container="player-vote-chart"]');
   const assignmentsContainer = document.querySelector('[data-container="player-assignments"]');
   const duelistContainer = document.querySelector('[data-container="player-duelist"]');
 
-  if (!slug || !headerContainer || !assignmentsContainer || !duelistContainer) return;
+  if (!slug || !headerContainer || !chartContainer || !assignmentsContainer || !duelistContainer) {
+    return;
+  }
 
   showLoading(headerContainer);
+  showLoading(chartContainer);
   showLoading(assignmentsContainer);
   showLoading(duelistContainer);
 
@@ -223,6 +228,16 @@ async function loadPlayerProfile() {
     inner.append(identity, stats);
     headerContainer.appendChild(inner);
 
+    clearElement(chartContainer);
+    renderVoteChart(chartContainer, player);
+    const chartShell = chartContainer.closest(".player-vote-chart-shell");
+    let refreshChartPlacement = null;
+    if (chartShell) {
+      chartShell.classList.add("is-bottom");
+      chartShell.classList.remove("is-side");
+      refreshChartPlacement = bindVoteChartPlacement(chartShell);
+    }
+
     clearElement(assignmentsContainer);
     assignmentsContainer.appendChild(
       player.hero_assignment
@@ -240,9 +255,14 @@ async function loadPlayerProfile() {
       player.duelist ? renderDuelistCard(player.duelist) : renderEmptyDuelist()
     );
 
+    if (typeof refreshChartPlacement === "function") {
+      window.requestAnimationFrame(refreshChartPlacement);
+    }
+
     document.title = `${player.nickname} — BFII Player Rankings`;
   } catch (error) {
     showError(headerContainer, "Player not found.");
+    clearElement(chartContainer);
     clearElement(assignmentsContainer);
     clearElement(duelistContainer);
     console.error(error);
