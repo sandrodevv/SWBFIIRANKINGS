@@ -84,8 +84,8 @@ function createRing({ key, label, total, ranking, duelist, max }) {
       <span class="vote-chart__split-fill vote-chart__split-fill--duelist" style="width:${duelistPct}%"></span>
     </div>
     <div class="vote-chart__split-meta">
-      <span>${formatNumber(ranking)} rank</span>
-      <span>${formatNumber(duelist)} duel</span>
+      <span>${formatNumber(ranking)} overall</span>
+      <span>${formatNumber(duelist)} duelist</span>
     </div>
   `;
 

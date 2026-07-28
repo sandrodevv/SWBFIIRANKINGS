@@ -299,11 +299,12 @@
 
 .vote-chart__split-meta {
   display: flex;
-  justify-content: space-between;
-  gap: 0.35rem;
+  flex-direction: column;
+  gap: 0.15rem;
   margin-top: 0.3rem;
   font-size: 0.65rem;
   color: $color-muted;
+  text-align: center;
 }
 
 .vote-chart__tooltip {
